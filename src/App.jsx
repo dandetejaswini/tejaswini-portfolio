@@ -5,6 +5,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [filterCategory, setFilterCategory] = useState('All');
   
@@ -88,10 +89,15 @@ export default function App() {
     speakText(query);
   };
 
+  const handleWelcomeEnter = () => {
+    setShowWelcome(false);
+    setLoading(false);
+    speakText("I am Tejaswini's AI assistant. Explore her software engineering projects, internships, and skills!");
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      speakText("I am Tejaswini's AI assistant. Explore her software engineering projects, internships, and skills!");
     }, 1200);
     return () => clearTimeout(timer);
   }, []);
@@ -486,6 +492,41 @@ export default function App() {
         </div>
       )}
 
+      {/* Welcome Overlay - triggers speech on click (required by browser autoplay policy) */}
+      {!loading && showWelcome && (
+        <div 
+          onClick={handleWelcomeEnter}
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer"
+          style={{ background: isDark ? 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #0f172a 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #fce7f3 40%, #f8fafc 100%)' }}
+        >
+          <div className="text-center space-y-6 animate-pulse-slow">
+            <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-pink-500 shadow-2xl shadow-pink-500/30">
+              <img 
+                src={`${import.meta.env.BASE_URL}avatar.jpg`}
+                alt="Tejaswini" 
+                className="w-full h-full object-cover"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
+            <h1 className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Welcome to My Portfolio
+            </h1>
+            <p className={`text-sm sm:text-base ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Dande Tejaswini — Software Engineer & AI Developer
+            </p>
+            <div className="mt-8">
+              <span className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg shadow-pink-600/30 transition-all text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Tap to Enter & Meet My AI Assistant
+              </span>
+            </div>
+            <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'} animate-bounce mt-4`}>
+              Click anywhere to continue
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Persistent Background Three.js Canvas */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 w-full h-full" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0 }} />
 
@@ -605,7 +646,7 @@ export default function App() {
                   className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600 shadow-xl ${isSpeaking ? 'border-pink-500 ring-4 ring-pink-500/30 scale-105' : 'border-pink-300/80 hover:border-pink-500'} transition-all duration-300 group/avatar shrink-0`}
                 >
                   <img 
-                    src="avatar.jpg" 
+                    src={`${import.meta.env.BASE_URL}avatar.jpg`} 
                     alt="Tejaswini AI Assistant" 
                     className="w-full h-full object-cover rounded-full transition-transform duration-500 group-hover/avatar:scale-110"
                     onError={(e) => {
