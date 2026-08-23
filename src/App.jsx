@@ -605,7 +605,7 @@ export default function App() {
                   className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600 shadow-xl ${isSpeaking ? 'border-pink-500 ring-4 ring-pink-500/30 scale-105' : 'border-pink-300/80 hover:border-pink-500'} transition-all duration-300 group/avatar shrink-0`}
                 >
                   <img 
-                    src="/avatar.jpg" 
+                    src="avatar.jpg" 
                     alt="Tejaswini AI Assistant" 
                     className="w-full h-full object-cover rounded-full transition-transform duration-500 group-hover/avatar:scale-110"
                     onError={(e) => {
