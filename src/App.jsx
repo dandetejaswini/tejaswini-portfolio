@@ -560,7 +560,7 @@ export default function App() {
               href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all shadow-sm"
+              className="inline-flex items-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-xl transition-all shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               <span>Resume</span>
@@ -589,32 +589,50 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile menu dropdown */}
+        {/* Mobile menu dropdown with backdrop click-outside dismiss */}
         {mobileMenuOpen && (
-          <div className={`lg:hidden ${isDark ? 'bg-slate-900/95' : 'bg-white/95'} backdrop-blur-lg border-b border-slate-300 px-6 py-4 space-y-3 text-sm`}>
-            {['Home', 'About', 'Skills', 'Experience', 'Projects', 'Achievements', 'Certifications', 'Education', 'Contact'].map((item) => {
-              const id = item.toLowerCase();
-              return (
+          <>
+            <div 
+              className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className={`relative z-50 lg:hidden ${isDark ? 'bg-slate-900/95 text-slate-100 border-slate-800' : 'bg-white/95 text-slate-800 border-slate-200'} backdrop-blur-lg border-b px-6 py-4 space-y-3 text-sm shadow-xl`}>
+              {['Home', 'About', 'Skills', 'Experience', 'Projects', 'Achievements', 'Certifications', 'Education', 'Contact'].map((item) => {
+                const id = item.toLowerCase();
+                return (
+                  <a
+                    key={item}
+                    href={`#${id}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-slate-700 dark:text-slate-300 hover:text-pink-500 py-1 font-medium"
+                  >
+                    {item}
+                  </a>
+                );
+              })}
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
                 <a
-                  key={item}
-                  href={`#${id}`}
+                  href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-700 dark:text-slate-300 hover:text-pink-500 py-1 font-medium"
+                  className="flex items-center justify-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm w-full"
                 >
-                  {item}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  <span>Download Resume</span>
                 </a>
-              );
-            })}
-          </div>
+              </div>
+            </div>
+          </>
         )}
       </header>
 
       {/* Home / Hero Section */}
       <section id="home" className="relative min-h-[90vh] flex items-center justify-center px-6 pt-32 pb-20 z-10">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* AI Talking Assistant Avatar Box */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center order-1 lg:order-2">
+          <div className="md:col-span-5 flex flex-col items-center justify-center order-2">
             <div className={`${cardGlassClass} p-6 rounded-3xl flex flex-col items-center relative group w-full max-w-sm`}>
               <div className="absolute -top-3 bg-pink-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
                 Tejaswini&apos;s AI Assistant
@@ -769,7 +787,7 @@ export default function App() {
                     Certifications
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini is pursuing B.Tech in CSE at Aditya University (2022-2026) with 8.64 CGPA, after scoring 96.7% in Intermediate and 96.66% in 10th standard.")}
+                    onClick={() => handleAssistantQuery("Tejaswini has completed her B.Tech in Computer Science & Engineering at Aditya University (2022-2026) with an 8.64 CGPA, after scoring 96.7% in Intermediate and 96.66% in 10th standard. She is an entry-level software candidate.")}
                     className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Education
@@ -780,10 +798,10 @@ export default function App() {
           </div>
 
           {/* Name & Bio */}
-          <div className="lg:col-span-7 flex flex-col items-start justify-center order-2 lg:order-1 space-y-6">
+          <div className="md:col-span-7 flex flex-col items-start justify-center order-1 space-y-6">
             <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full ${isDark ? 'bg-pink-950/50 border-pink-800/60 text-pink-300' : 'bg-pink-50 border-pink-200 text-pink-700'} border text-xs font-semibold tracking-wide uppercase`}>
               <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-              <span>Software Development Candidate</span>
+              <span>Entry-Level Software Engineer &amp; AI Developer</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
@@ -791,7 +809,7 @@ export default function App() {
             </h1>
 
             <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
-              &ldquo;Software Development candidate with hands-on experience building AI-enabled platforms using Python, Java, and REST APIs, alongside enterprise Salesforce solutions. Strong fundamentals in software engineering and system architecture.&rdquo;
+              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
@@ -845,12 +863,12 @@ export default function App() {
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className={`${cardGlassClass} p-8 rounded-3xl space-y-4`}>
-              <h4 className="text-xl font-semibold">Background & Passion</h4>
+              <h4 className="text-xl font-semibold">Background &amp; Passion</h4>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                I am a dedicated software development student and engineer with a robust foundation in algorithmic problem solving, object-oriented programming, and cloud-backed system integration. My expertise spans Python, Java, JavaScript, and enterprise Salesforce ecosystems.
+                I am an entry-level Software Engineer &amp; AI Developer with a strong foundation in Artificial Intelligence, Multi-Agent Systems, and enterprise software engineering. My technical expertise encompasses Python, Java, JavaScript, and Salesforce ecosystems (LWC &amp; AgentForce).
               </p>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                Whether architecting intelligent multi-agent systems, optimizing FastAPI inference pipelines, or building responsive web and mobile applications, I focus on scalability, maintainability, and user experience.
+                From architecting autonomous multi-agent GitHub intelligence tools to building high-throughput FastAPI inference engines, I focus on engineering scalable, maintainable AI applications with seamless user experiences.
               </p>
             </div>
 
@@ -858,7 +876,7 @@ export default function App() {
               <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2`}>
                 <span className="text-3xl font-black text-pink-500">10+</span>
                 <h5 className="text-sm font-semibold">Production Projects</h5>
-                <p className={`text-xs ${textMutedClass}`}>AI, Full-Stack & Salesforce</p>
+                <p className={`text-xs ${textMutedClass}`}>AI, Full-Stack &amp; Salesforce</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2`}>
@@ -868,9 +886,9 @@ export default function App() {
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2 col-span-2`}>
-                <span className="text-2xl font-black text-violet-500">B.Tech CSE (2022–2026)</span>
+                <span className="text-2xl font-black text-violet-500">B.Tech CSE (Completed 2026)</span>
                 <h5 className="text-sm font-semibold">Aditya University</h5>
-                <p className={`text-xs ${textMutedClass}`}>CGPA: 8.64 / 10</p>
+                <p className={`text-xs ${textMutedClass}`}>CGPA: 8.64 / 10 • Entry-Level Candidate</p>
               </div>
             </div>
           </div>
@@ -1215,12 +1233,12 @@ export default function App() {
             <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h4 className="text-xl font-bold">B.Tech — Computer Science and Engineering (CSE)</h4>
-                <span className="text-xs font-semibold bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">2022 – 2026</span>
+                <span className="text-xs font-semibold bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">Completed (2022 – 2026) • Fresher</span>
               </div>
               <h5 className={`text-sm font-semibold ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College)</h5>
               <p className={`text-xs ${textMutedClass}`}>Location: Surampalem, Andhra Pradesh</p>
               <div className="pt-2">
-                <span className={`text-sm font-bold ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-200/80 text-slate-800'} px-3 py-1.5 rounded-lg inline-block`}>CGPA: 8.64 / 10</span>
+                <span className={`text-sm font-bold ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-200/80 text-slate-800'} px-3 py-1.5 rounded-lg inline-block`}>Degree Completed — CGPA: 8.64 / 10</span>
               </div>
             </div>
 
