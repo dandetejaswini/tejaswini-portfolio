@@ -14,17 +14,41 @@ export default function App() {
   const [theme, setTheme] = useState('light');
   
   // Contact Form State
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState(null);
   
-  // AI Assistant Chat & Speech State
-  const [assistantMessage, setAssistantMessage] = useState("I am Tejaswini's AI assistant. Explore her software engineering projects, internships, and skills!");
+  // AI Assistant Speech State
+  const [assistantMessage, setAssistantMessage] = useState(
+    "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!"
+  );
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const canvasRef = useRef(null);
   const speechRef = useRef(null);
+  const returnTimerRef = useRef(null);
+
+  const cancelReturnTimer = () => {
+    if (returnTimerRef.current) {
+      clearTimeout(returnTimerRef.current);
+      returnTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      cancelReturnTimer();
+    };
+
+    window.addEventListener('wheel', handleUserInteraction, { passive: true });
+    window.addEventListener('touchmove', handleUserInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleUserInteraction);
+      window.removeEventListener('touchmove', handleUserInteraction);
+    };
+  }, []);
 
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
@@ -84,16 +108,93 @@ export default function App() {
     }
   };
 
-  const handleAssistantQuery = (query) => {
-    setAssistantMessage(query);
+  // Section Voice Navigation Handlers (10-second return-to-hero behavior)
+  const triggerSectionNavigation = (sectionId, message, autoReturn = true) => {
+    cancelReturnTimer();
+    setAssistantMessage(message);
     setIsPaused(false);
-    speakText(query);
+    speakText(message);
+
+    const targetEl = document.getElementById(sectionId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (autoReturn) {
+      returnTimerRef.current = setTimeout(() => {
+        const heroEl = document.getElementById('home');
+        if (heroEl) {
+          heroEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 10000);
+    }
+  };
+
+  const handleNavAbout = () => {
+    triggerSectionNavigation(
+      'about',
+      "Tejaswini is an entry-level Software Engineer and AI Developer with experience across AI, backend development, APIs, Salesforce, PEGA, automation, and software engineering."
+    );
+  };
+
+  const handleNavSkills = () => {
+    triggerSectionNavigation(
+      'skills',
+      "Her skills span AI and machine learning, programming, backend and APIs, frontend development, Salesforce, PEGA, databases, DevOps, and core software engineering."
+    );
+  };
+
+  const handleNavProjects = () => {
+    triggerSectionNavigation(
+      'projects',
+      "Tejaswini has built projects across AI, developer tools, security, mobile applications, FinTech, NLP, Salesforce, and automation."
+    );
+  };
+
+  const handleNavJourney = () => {
+    triggerSectionNavigation(
+      'journey',
+      "Tejaswini's professional journey includes enterprise software, workflow automation, Salesforce development, API integration, and AI-driven application workflows."
+    );
+  };
+
+  const handleNavEducation = () => {
+    triggerSectionNavigation(
+      'journey',
+      "Tejaswini is pursuing her B.Tech in Computer Science and Engineering at Aditya University with a CGPA of 8.64. She completed Intermediate in MPC with 96.7 percent and 10th standard with 96.66 percent."
+    );
+  };
+
+  const handleNavAchievements = () => {
+    setCredentialsTab('achievements');
+    triggerSectionNavigation(
+      'credentials',
+      "Her achievements include a Top 10 position in CODE WARS 1.0, second prize in a paper presentation, qualification for the OpenAI and NextWave State-Level Buildathon, and advancement to Round 3 of HP PowerLab 2.0."
+    );
+  };
+
+  const handleNavCredentials = () => {
+    setCredentialsTab('certifications');
+    triggerSectionNavigation(
+      'credentials',
+      "Her certifications include Salesforce Platform Developer I, Salesforce AgentForce Specialist, Pega Certified System Architect, Red Hat Certified System Administrator, and Information Technology Specialist certifications."
+    );
+  };
+
+  const handleNavHire = () => {
+    triggerSectionNavigation(
+      'contact',
+      "Interested in working with Tejaswini? She is open to opportunities in Software Engineering, AI and Machine Learning, Backend Development, Full Stack Development, Salesforce, PEGA, Automation, and other technology-focused roles. Let's connect.",
+      false
+    );
   };
 
   const handleWelcomeEnter = () => {
     setShowWelcome(false);
     setLoading(false);
-    speakText("I am Tejaswini's AI assistant. Explore her software engineering projects, internships, and skills!");
+    const greetingText = "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!";
+    setAssistantMessage(greetingText);
+    speakText(greetingText);
   };
 
   useEffect(() => {
@@ -113,7 +214,6 @@ export default function App() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Smooth circular canvas texture for ambient particles
     const circleCanvas = document.createElement('canvas');
     circleCanvas.width = 16;
     circleCanvas.height = 16;
@@ -240,7 +340,7 @@ export default function App() {
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      setFormStatus({ type: 'error', text: 'Please enter all the fields before submitting.' });
+      setFormStatus({ type: 'error', text: 'Please enter all the required fields before submitting.' });
       return;
     }
     if (!nameRegex.test(formData.name)) {
@@ -269,6 +369,7 @@ export default function App() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          subject: formData.subject || `Opportunity Message from ${formData.name}`,
           message: formData.message,
           _subject: `New Portfolio Contact Message from ${formData.name}`,
           _captcha: "false"
@@ -276,12 +377,17 @@ export default function App() {
       });
 
       setFormSubmitting(false);
-      setFormStatus({ type: 'success', text: 'Message Sent Successfully!' });
+      const successText = "Thank you for reaching out! Your message has been sent successfully to Tejaswini. She'll get back to you as soon as possible.";
+      setFormStatus({ type: 'success', text: successText });
+
+      // Spoken voice feedback upon contact success
+      const spokenSuccess = "Thank you for reaching out to Tejaswini. Your message has been sent successfully!";
+      setAssistantMessage(spokenSuccess);
+      speakText(spokenSuccess);
 
       setTimeout(() => {
-        setFormData({ name: '', email: '', message: '' });
-        setFormStatus(null);
-      }, 2000);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      }, 3000);
     } catch (err) {
       setFormSubmitting(false);
       setFormStatus({ type: 'error', text: 'Failed to send message. Please try again later.' });
@@ -350,7 +456,7 @@ export default function App() {
       subtitle: 'Real-time AI content shield',
       category: 'AI / Security',
       featured: true,
-      badge: 'OpenAI Academy & NextWave Buildathon',
+      badge: 'OpenAI Academy & NextWave State-Level Buildathon',
       github: 'https://github.com/dandetejaswini/Net-Gaurdian',
       desc: 'Browser extension that detects and blurs harmful content in real time using privacy-preserving on-device inference.',
       tech: ['TensorFlow.js', 'Flask', 'LangChain', 'Browser Extension', 'Privacy-First'],
@@ -463,29 +569,72 @@ export default function App() {
     { year: 'Open Source', title: 'Google Summer of Code — Contributions', org: 'Open Source Ecosystem', desc: 'Contributed to AI tool ecosystems including LangChain, LlamaIndex, and CrewAI.' }
   ];
 
+  // Exactly structured 8 Skills Categories
+  const skillsCategories = [
+    {
+      title: 'Programming',
+      icon: 'code',
+      items: ['Python', 'Java', 'JavaScript', 'TypeScript', 'C', 'C++', 'Apex', 'SQL']
+    },
+    {
+      title: 'AI / Machine Learning',
+      icon: 'ai',
+      items: ['AI', 'Machine Learning', 'NLP', 'Transformers', 'BERT', 'TensorFlow', 'LangChain', 'Semantic Search', 'TF-IDF', 'spaCy', 'Neural Networks', 'Sentiment Analysis', 'NER', 'Summarization', 'Translation', 'AI Agents', 'Prompt Engineering']
+    },
+    {
+      title: 'Backend & APIs',
+      icon: 'backend',
+      items: ['Flask', 'FastAPI', 'Spring Boot', 'Node.js', 'REST APIs', 'JDBC', 'JPA', 'Spring Data JPA', 'Microservices', 'API Integration']
+    },
+    {
+      title: 'Frontend & Mobile',
+      icon: 'frontend',
+      items: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'React Native', 'LWC', 'Tailwind CSS', 'Material UI', 'SLDS', 'WebRTC', 'ZXing']
+    },
+    {
+      title: 'Salesforce & PEGA',
+      icon: 'enterprise',
+      items: ['Salesforce Platform', 'Apex', 'LWC', 'Salesforce APIs', 'Reports', 'Dashboards', 'Flows', 'Salesforce Automation', 'PEGA', 'PEGA Case Management', 'PEGA Workflow Automation']
+    },
+    {
+      title: 'Databases & Data',
+      icon: 'data',
+      items: ['SQL', 'H2', 'MongoDB', 'Mongoose', 'Data Processing', 'Data Pipelines', 'Data Analysis', 'Data Visualization', 'SMOTE']
+    },
+    {
+      title: 'DevOps & Developer Tools',
+      icon: 'devops',
+      items: ['Git', 'GitHub', 'GitHub Actions', 'Docker', 'Maven', 'SDKMAN', 'Vercel', 'CI/CD', 'Kafka', 'Java 17', 'Java 21']
+    },
+    {
+      title: 'Software Engineering',
+      icon: 'engineering',
+      items: ['Data Structures & Algorithms', 'OOP', 'Graphs', 'Dynamic Programming', 'Debugging', 'Testing', 'Modular Design', 'System Design', 'Workflow Automation', 'Technical Documentation']
+    }
+  ];
+
+  // Exact User Experience Data
   const experienceData = [
     {
-      company: 'Areteans Technology Solutions',
-      role: 'PEGA Software Engineer Intern / Specialist',
-      period: 'Jan 2025 – Present',
-      location: 'Hyderabad, India',
-      badge: 'Current Internship',
+      company: 'Areteans Technology Solutions Pvt. Ltd. | Hyderabad',
+      role: 'Technology Specialist Apprentice',
+      period: 'Jan 2025 – Jun 2025',
+      badge: 'Current Role',
       points: [
-        'Engineered enterprise PEGA workflow solutions and case management rules.',
-        'Collaborated on client-facing business process automation and REST integrations.',
-        'Applied Pega Certified System Architect (CSA) principles to optimize application lifecycle.'
+        'Implemented PEGA-based workflow automation and application logic for enterprise business processes.',
+        'Optimized backend logic and case flows, contributing to a 25% improvement in process efficiency.',
+        'Collaborated with engineering teams on application development, AI-enabled workflows, debugging, testing, and process optimization.'
       ]
     },
     {
-      company: 'Technical Hub',
-      role: 'Salesforce Software Engineering Intern',
-      period: 'May 2024 – Nov 2024',
-      location: 'Surampalem, AP',
+      company: 'Technical Hub Pvt. Ltd. | Surampalem',
+      role: 'Software Engineering Intern — Salesforce Platform',
+      period: 'Jun 2024 – Jul 2024',
       badge: 'Completed',
       points: [
-        'Developed custom Apex classes, triggers, and Lightning Web Components (LWC).',
-        'Integrated third-party REST API services into Salesforce CRM for real-time data sync.',
-        'Earned Salesforce Platform Developer I and AgentForce Specialist certifications.'
+        'Developed Salesforce application functionality using Apex and Lightning Web Components (LWC).',
+        'Integrated third-party REST APIs and developed Apex/Python backend logic for AI-driven sentiment-analysis workflows.',
+        'Worked on AI/data processing, application integration, debugging, testing, and reusable component development.'
       ]
     }
   ];
@@ -641,8 +790,8 @@ export default function App() {
               { id: 'about', label: 'About' },
               { id: 'skills', label: 'Skills' },
               { id: 'projects', label: 'Projects' },
-              { id: 'journey', label: 'Journey (Experience & Education)' },
-              { id: 'credentials', label: 'Credentials (Certifications & Awards)' },
+              { id: 'journey', label: 'Journey' },
+              { id: 'credentials', label: 'Credentials' },
               { id: 'contact', label: 'Contact' }
             ].map((item) => (
               <a
@@ -756,15 +905,14 @@ export default function App() {
                   {isPaused ? 'Tap avatar to Resume' : isSpeaking ? 'Tap avatar to Pause' : 'Tap avatar to Speak'}
                 </p>
 
-                {/* Hire Me Action Tile (No emoji) */}
+                {/* Hire Me Prominent Separate Button */}
                 <div className="w-full flex justify-center py-1">
-                  <a
-                    href="#contact"
-                    onClick={() => handleAssistantQuery("Tejaswini is actively seeking Full-Time software engineering roles, AI developer positions, and entry-level opportunities! Please reach out via the contact form.")}
-                    className="max-w-[190px] w-full flex items-center justify-center space-x-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] text-center whitespace-nowrap"
+                  <button
+                    onClick={handleNavHire}
+                    className="max-w-[190px] w-full flex items-center justify-center bg-gradient-to-r from-cyan-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] text-center whitespace-nowrap"
                   >
                     <span>Hire Tejaswini</span>
-                  </a>
+                  </button>
                 </div>
 
                 <p className={`text-xs font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'} px-2 text-center italic leading-relaxed`}>
@@ -772,51 +920,50 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Prompt Buttons */}
+              {/* Exact Predefined AI Assistant Buttons */}
               <div className="w-full mt-4 space-y-2">
-                <p className={`text-[11px] font-semibold ${textMutedClass} uppercase tracking-wider text-center`}>Ask me anything:</p>
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini is a Computer Science engineering graduate from Aditya University with an 8.64 CGPA, specializing in AI, full-stack, and enterprise solutions.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={handleNavAbout}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     About
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini has interned at Areteans Technology Solutions as a PEGA Specialist, and at Technical Hub as a Salesforce Software Engineering Intern.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
-                  >
-                    Experience
-                  </button>
-                  <button 
-                    onClick={() => handleAssistantQuery("Tejaswini has strong skills in Java, Python, JavaScript, Apex, FastAPI, Flask, React, SQL, and Salesforce Lightning Web Components.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={handleNavSkills}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Skills
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini has built major systems including CXIntel AI CRM, GitNexus multi-agent system, EduBond mobile app, and SpendIQ FinTech tool.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={handleNavProjects}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Projects
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini secured 2nd prize in national paper presentation, ranked in Top 10 at Code Wars 1.0, and qualified in OpenAI hackathons.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={handleNavJourney}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                  >
+                    Journey
+                  </button>
+                  <button 
+                    onClick={handleNavEducation}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                  >
+                    Education
+                  </button>
+                  <button 
+                    onClick={handleNavAchievements}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Achievements
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini holds Salesforce Platform Developer I, AgentForce Specialist, Pega CSA, Red Hat RHCSA, and Certiport Python and Java certifications.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={handleNavCredentials}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
                   >
-                    Certifications
-                  </button>
-                  <button 
-                    onClick={() => handleAssistantQuery("Tejaswini has completed her B.Tech in Computer Science & Engineering at Aditya University (2022-2026) with an 8.64 CGPA, after scoring 96.7% in Intermediate and 96.66% in 10th standard. She is an entry-level software candidate.")}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
-                  >
-                    Education
+                    Credentials
                   </button>
                 </div>
               </div>
@@ -827,15 +974,16 @@ export default function App() {
           <div className="col-span-12 md:col-span-7 flex flex-col items-start justify-center order-2 md:order-1 space-y-6">
             <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ${isDark ? 'bg-cyan-950/50 border-cyan-800/60 text-cyan-300' : 'bg-cyan-50 border-cyan-200 text-cyan-700'} border text-xs font-semibold tracking-wide uppercase`}>
               <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-              <span>Entry-Level Software Engineer &amp; AI Developer</span>
+              <span>Software Engineer &amp; AI Developer</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
               DANDE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500">TEJASWINI</span>
             </h1>
 
+            {/* Exact Hero Text Requested by User */}
             <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
-              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
+              &ldquo;Software Engineer with hands-on experience in AI, Python, JavaScript, Salesforce, backend development, and REST APIs. Building AI-powered applications, intelligent developer tools, NLP solutions, and enterprise automation systems with a strong foundation in software engineering.&rdquo;
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
@@ -883,14 +1031,15 @@ export default function App() {
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className={`${cardGlassClass} p-8 rounded-3xl space-y-4`}>
               <h4 className="text-xl font-bold">Background &amp; Passion</h4>
+              {/* Exact Background & Passion text requested by user */}
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                I am an entry-level Software Engineer &amp; AI Developer with a strong foundation in Artificial Intelligence, Multi-Agent Systems, and enterprise software engineering. My technical expertise encompasses Python, Java, JavaScript, and Salesforce ecosystems (LWC &amp; AgentForce).
+                I am an entry-level Software Engineer and AI Developer with a strong foundation in Artificial Intelligence, software engineering, backend development, and API integration. My technical background includes Python, Java, JavaScript, Salesforce, Apex, Lightning Web Components, and modern AI/NLP technologies.
               </p>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                From architecting autonomous multi-agent GitHub intelligence tools to building high-throughput FastAPI inference engines, I focus on engineering scalable, maintainable AI applications with seamless user experiences.
+                I enjoy building AI-powered applications, intelligent developer tools, NLP solutions, and workflow automation systems, with hands-on experience across projects involving multi-agent systems, REST APIs, FastAPI, Transformers, and Salesforce platforms. I focus on developing practical, reliable solutions while continuously strengthening my software engineering and problem-solving skills.
               </p>
 
-              {/* Target Engineering Roles (Matching Image 2) */}
+              {/* Target Engineering Roles */}
               <div className="pt-3 space-y-2 border-t border-slate-200 dark:border-slate-800">
                 <h5 className={`text-xs font-bold uppercase tracking-wider ${textMutedClass}`}>Specialized Roles</h5>
                 <div className="flex flex-wrap gap-2">
@@ -916,18 +1065,18 @@ export default function App() {
               </div>
             </div>
 
-            {/* Metrics & Impact Cards (Matching Image 2 & 3) */}
+            {/* Metrics & Impact Cards */}
             <div className="grid grid-cols-2 gap-4">
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
                 <span className="text-3xl font-black text-cyan-500">10+</span>
                 <h5 className="text-sm font-bold">Projects Shipped</h5>
-                <p className={`text-xs ${textMutedClass}`}>AI, software engineering &amp; Salesforce solutions</p>
+                <p className={`text-xs ${textMutedClass}`}>AI, software engineering, analytics, and Salesforce projects</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
                 <span className="text-3xl font-black text-indigo-500">6</span>
                 <h5 className="text-sm font-bold">AI Domains</h5>
-                <p className={`text-xs ${textMutedClass}`}>GenAI, Agentic AI, RAG, NLP, ML &amp; Automation</p>
+                <p className={`text-xs ${textMutedClass}`}>GenAI, Agentic AI, RAG, NLP, ML, and AI automation</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2 col-span-2`}>
@@ -943,64 +1092,37 @@ export default function App() {
         </div>
       </section>
 
-      {/* Skills Section */}
+      {/* Skills Section (Exact 8 Categories Requested by User) */}
       <section id="skills" className="py-20 px-6 relative z-10">
         <div className="max-w-6xl mx-auto space-y-10">
           <div className="text-center space-y-2">
             <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Technical Proficiency</h2>
-            <h3 className="text-3xl font-extrabold tracking-tight">Skills &amp; Expertise</h3>
+            <h3 className="text-3xl font-extrabold tracking-tight">SKILLS</h3>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            {skillsCategories.map((cat, idx) => (
+              <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold text-xs">
+                    0{idx + 1}
+                  </div>
+                  <h4 className="text-base font-bold">{cat.title}</h4>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {cat.items.map((item) => (
+                    <span 
+                      key={item} 
+                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg transition-colors ${
+                        isDark ? 'bg-slate-800/80 text-cyan-300 border border-slate-700' : 'bg-cyan-50/80 text-cyan-800 border border-cyan-200/60'
+                      }`}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <h4 className="text-lg font-bold">Languages</h4>
-              <div className="flex flex-wrap gap-2">
-                {['Python', 'Java', 'JavaScript', 'TypeScript', 'SQL', 'Apex'].map(s => (
-                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-              </div>
-              <h4 className="text-lg font-bold">Frameworks &amp; Web</h4>
-              <div className="flex flex-wrap gap-2">
-                {['FastAPI', 'Flask', 'Node.js', 'React', 'React Native', 'LWC', 'REST APIs'].map(s => (
-                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-violet-500/10 text-violet-500 flex items-center justify-center font-bold">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              </div>
-              <h4 className="text-lg font-bold">AI &amp; Data Tools</h4>
-              <div className="flex flex-wrap gap-2">
-                {['LangChain', 'Transformers', 'TensorFlow', 'Scikit-Learn', 'CrewAI', 'LlamaIndex'].map(s => (
-                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-              </div>
-              <h4 className="text-lg font-bold">Enterprise Platforms</h4>
-              <div className="flex flex-wrap gap-2">
-                {['Salesforce', 'AgentForce', 'PEGA', 'Docker', 'Git / GitHub', 'VS Code'].map(s => (
-                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
-                ))}
-              </div>
-            </div>
-
+            ))}
           </div>
         </div>
       </section>
@@ -1026,7 +1148,7 @@ export default function App() {
             ))}
           </div>
 
-          {/* Projects Grid (Matching Image 1 Reference Layout) */}
+          {/* Projects Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.map((project) => (
               <div
@@ -1035,10 +1157,10 @@ export default function App() {
                 className={`${cardGlassClass} p-6 rounded-3xl flex flex-col justify-between cursor-pointer space-y-4 hover:scale-[1.01] transition-transform`}
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-[11px] font-bold text-cyan-500 uppercase tracking-wider">{project.category}</span>
                     {project.badge && (
-                      <span className="text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/20 truncate max-w-[150px]">
+                      <span className="text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/20 whitespace-normal">
                         {project.badge}
                       </span>
                     )}
@@ -1053,7 +1175,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-4 pt-1">
-                  {/* Colored Pastel Tech Stack Badges (Matching Image 1) */}
+                  {/* Tech Stack Badges */}
                   <div className="flex flex-wrap gap-1.5">
                     {project.tech.map((t) => (
                       <span 
@@ -1069,27 +1191,27 @@ export default function App() {
                     ))}
                   </div>
 
-                  {/* Outlined Action Buttons (Matching Image 1: Architecture & Repo) */}
-                  <div className="flex items-center space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
+                  {/* Outlined Action Buttons (Overview, Repo, Live) */}
+                  <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
                     <button
                       onClick={(e) => { e.stopPropagation(); setSelectedProject(project); }}
-                      className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                      className={`flex-1 min-w-[80px] inline-flex items-center justify-center space-x-1 text-xs font-semibold py-2 px-2.5 rounded-xl border transition-all ${
                         isDark
                           ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border-slate-700/80'
                           : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-200 shadow-xs'
                       }`}
                     >
-                      <svg className="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                      <span>Architecture</span>
+                      <svg className="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <span>Overview</span>
                     </button>
                     
-                    {project.github ? (
+                    {project.github && (
                       <a
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                        className={`flex-1 min-w-[70px] inline-flex items-center justify-center space-x-1 text-xs font-semibold py-2 px-2.5 rounded-xl border transition-all ${
                           isDark
                             ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border-slate-700/80'
                             : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-200 shadow-xs'
@@ -1098,13 +1220,15 @@ export default function App() {
                         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                         <span>Repo</span>
                       </a>
-                    ) : (
+                    )}
+
+                    {project.live && (
                       <a
                         href={project.live}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                        className={`flex-1 min-w-[70px] inline-flex items-center justify-center space-x-1 text-xs font-semibold py-2 px-2.5 rounded-xl border transition-all ${
                           isDark
                             ? 'bg-slate-900/80 hover:bg-slate-800 text-cyan-400 border-slate-700/80'
                             : 'bg-white hover:bg-slate-100 text-cyan-700 border-slate-200 shadow-xs'
@@ -1194,7 +1318,7 @@ export default function App() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column: Work Experience */}
+            {/* Left Column: Work Experience (Exact User Text) */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-slate-800">
                 <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
@@ -1229,7 +1353,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Column: Academic Degrees */}
+            {/* Right Column: Academic Degrees (Clean Years on Right) */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-slate-800">
                 <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
@@ -1242,18 +1366,18 @@ export default function App() {
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h5 className="text-base font-bold">B.Tech — Computer Science &amp; Engineering (CSE)</h5>
-                    <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">Completed (2022–2026)</span>
+                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">2022 – 2026</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College) — Surampalem, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Degree Completed — CGPA: 8.64 / 10</span>
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>CGPA: 8.64 / 10</span>
                   </div>
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h5 className="text-base font-bold">Intermediate — MPC</h5>
-                    <span className="text-[11px] font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20">Passed 2022</span>
+                    <span className="text-xs font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20">2020 – 2022</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Saraswathi Junior College — Ongole, AP</p>
                   <div className="pt-2">
@@ -1264,7 +1388,7 @@ export default function App() {
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h5 className="text-base font-bold">10th Standard</h5>
-                    <span className="text-[11px] font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20">Passed 2020</span>
+                    <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20">2020</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Chaitanya EM High School — Singarayakonda, AP</p>
                   <div className="pt-2">
@@ -1346,7 +1470,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Contact Section (Exact User Specifications) */}
       <section id="contact" className="py-20 px-6 relative z-10">
         <div className="max-w-5xl mx-auto space-y-10">
           <div className="text-center space-y-2">
@@ -1356,10 +1480,33 @@ export default function App() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <h4 className="text-2xl font-bold">Let&apos;s Build Something Together</h4>
-              <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                I am actively seeking Full-Time software engineering opportunities, AI developer roles, and entry-level engineering positions. Feel free to reach out via the form or connect through my professional profiles below!
-              </p>
+              <h4 className="text-2xl font-bold">Let&apos;s Connect</h4>
+              
+              {/* Exact Specified Contact Top Display Text */}
+              <div className={`${cardGlassClass} p-5 rounded-2xl space-y-3`}>
+                <p className={`${textMutedClass} leading-relaxed text-sm font-medium`}>
+                  Thank you for your interest in working with Tejaswini. If you have an opportunity that matches her profile, feel free to reach out through the contact form.
+                </p>
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <h5 className={`text-xs font-bold uppercase tracking-wider ${textMutedClass} mb-2`}>Open Opportunity Areas:</h5>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      'Software Engineering',
+                      'AI / Machine Learning',
+                      'Backend Development',
+                      'Full Stack Development',
+                      'Salesforce',
+                      'PEGA',
+                      'Automation',
+                      'Technology-focused roles'
+                    ].map((area) => (
+                      <span key={area} className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               <div className="space-y-4 pt-2">
                 <div className={`flex items-center space-x-4 ${cardGlassClass} p-4 rounded-2xl`}>
@@ -1442,6 +1589,17 @@ export default function App() {
                 </div>
 
                 <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider ${textMutedClass} mb-2`}>Subject (Optional)</label>
+                  <input
+                    type="text"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                    placeholder="e.g. Software Engineering Role / Project Collaboration"
+                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors`}
+                  />
+                </div>
+
+                <div>
                   <label className={`block text-xs font-semibold uppercase tracking-wider ${textMutedClass} mb-2`}>Your Message</label>
                   <textarea
                     rows="4"
@@ -1460,8 +1618,9 @@ export default function App() {
                   )}
                 </div>
 
+                {/* Contact Form Success / Error Box */}
                 {formStatus && (
-                  <div className={`p-3.5 rounded-xl text-xs font-bold text-center ${formStatus.type === 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}`}>
+                  <div className={`p-4 rounded-2xl text-xs font-semibold text-center leading-relaxed ${formStatus.type === 'success' ? 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-500 dark:text-rose-400 border border-rose-500/30'}`}>
                     {formStatus.text}
                   </div>
                 )}
