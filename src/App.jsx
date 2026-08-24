@@ -61,7 +61,7 @@ export default function App() {
     };
   }, [mobileMenuOpen, selectedProject]);
 
-  const speakText = (text) => {
+  const speakText = (text, onComplete) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -85,6 +85,7 @@ export default function App() {
         utterance.onend = () => {
           setIsSpeaking(false);
           setIsPaused(false);
+          if (onComplete) onComplete();
         };
         utterance.onerror = () => {
           setIsSpeaking(false);
@@ -119,12 +120,11 @@ export default function App() {
     }
   };
 
-  // Section Voice Navigation Handlers (10-second return-to-hero behavior)
+  // Section Voice Navigation Handlers (returns to Hero after speech completes)
   const triggerSectionNavigation = (sectionId, message, autoReturn = true) => {
     cancelReturnTimer();
     setAssistantMessage(message);
     setIsPaused(false);
-    speakText(message);
 
     const targetEl = document.getElementById(sectionId);
     if (targetEl) {
@@ -132,12 +132,18 @@ export default function App() {
     }
 
     if (autoReturn) {
-      returnTimerRef.current = setTimeout(() => {
-        const heroEl = document.getElementById('home');
-        if (heroEl) {
-          heroEl.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 10000);
+      // Return to Hero ONLY after speech finishes — not on a fixed timer
+      speakText(message, () => {
+        // Small buffer after speech ends so visitor can read the section
+        returnTimerRef.current = setTimeout(() => {
+          const heroEl = document.getElementById('home');
+          if (heroEl) {
+            heroEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 1500);
+      });
+    } else {
+      speakText(message);
     }
   };
 
