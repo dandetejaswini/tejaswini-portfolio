@@ -225,8 +225,10 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Welcome canvas animation - canvas is always in DOM, visibility controlled by CSS
   useEffect(() => {
-    if (!showWelcome || !welcomeCanvasRef.current) return;
+    if (!welcomeCanvasRef.current) return;
+    if (!showWelcome || loading) return;
 
     const canvas = welcomeCanvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -469,6 +471,7 @@ export default function App() {
       cancelAnimationFrame(animationFrameId);
     };
   }, [showWelcome, loading, theme]);
+  // NOTE: canvas element is rendered outside the conditional block below, always in DOM
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -941,6 +944,17 @@ export default function App() {
         </div>
       )}
 
+      {/* Welcome Canvas - ALWAYS in DOM so ref is available for useEffect */}
+      <canvas
+        ref={welcomeCanvasRef}
+        style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          pointerEvents: 'none',
+          zIndex: 61,
+          display: (!loading && showWelcome) ? 'block' : 'none'
+        }}
+      />
+
       {/* Welcome Overlay - triggers speech on click */}
       {!loading && showWelcome && (
         <div 
@@ -948,8 +962,6 @@ export default function App() {
           className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6 overflow-hidden select-none"
           style={{ background: isDark ? 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e0f2fe 100%)' }}
         >
-          {/* Interactive cursor & background twinkling rounds canvas */}
-          <canvas ref={welcomeCanvasRef} className="absolute inset-0 pointer-events-none z-10 w-full h-full" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
           
           <div className="text-center space-y-6 max-w-md mx-auto relative z-10">
             <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-cyan-500/80 shadow-2xl shadow-cyan-500/30 transition-transform hover:scale-105">
