@@ -113,7 +113,7 @@ export default function App() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Smooth circular canvas texture for elegant ambient background particles
+    // Smooth circular canvas texture for ambient particles
     const circleCanvas = document.createElement('canvas');
     circleCanvas.width = 16;
     circleCanvas.height = 16;
@@ -313,12 +313,13 @@ export default function App() {
     {
       id: 'cxintel',
       title: 'CXIntel',
+      subtitle: 'Sentiment-aware CRM platform',
       category: 'AI / Salesforce / Automation',
       featured: true,
       github: 'https://github.com/dandetejaswini/CXIntel',
       live: 'https://cxintel-dev-ed.develop.my.site.com/s/',
-      desc: 'AI-driven CRM focused on customer feedback analysis and workflow automation.',
-      tech: ['Apex', 'Lightning Web Components', 'JavaScript', 'Python', 'REST APIs', 'GitHub Actions'],
+      desc: 'Salesforce Experience Cloud CRM platform integrating Python sentiment pipelines to analyze customer feedback and automate support routing.',
+      tech: ['Apex', 'LWC', 'JavaScript', 'Python', 'REST APIs', 'GitHub Actions'],
       metrics: [
         'Analyzed 500+ customer feedback records',
         'Improved insight accuracy by 35%',
@@ -330,11 +331,12 @@ export default function App() {
     {
       id: 'gitnexus',
       title: 'GitNexus',
+      subtitle: 'Intelligent Multi-Agent System',
       category: 'AI / Developer Tools',
       featured: true,
       github: 'https://github.com/dandetejaswini/GitNexus',
-      desc: 'An Intelligent Multi-Agent System for Automated GitHub Analysis.',
-      tech: ['JavaScript', 'AI Agents', 'GitHub REST API', 'Automation'],
+      desc: 'Autonomous multi-agent system analyzing GitHub repository architecture, pull requests, and commit metrics to summarize codebase health.',
+      tech: ['JavaScript', 'AI Agents', 'GitHub REST API', 'Automation', 'LangChain'],
       metrics: [
         'Automated repository code analysis',
         'Multi-agent workflow orchestration',
@@ -345,12 +347,13 @@ export default function App() {
     {
       id: 'netguardian',
       title: 'NetGuardian',
+      subtitle: 'Real-time AI content shield',
       category: 'AI / Security',
       featured: true,
-      badge: 'Qualified: OpenAI Academy & NextWave Buildathon',
+      badge: 'OpenAI Academy & NextWave Buildathon',
       github: 'https://github.com/dandetejaswini/Net-Gaurdian',
-      desc: 'Chrome extension for safer browsing that detects and blurs inappropriate content using lightweight AI. Qualified for OpenAI Academy & NextWave Buildathon.',
-      tech: ['TypeScript', 'Chrome Extension', 'Flask', 'NLP', 'Privacy-First'],
+      desc: 'Browser extension that detects and blurs harmful content in real time using privacy-preserving on-device inference.',
+      tech: ['TensorFlow.js', 'Flask', 'LangChain', 'Browser Extension', 'Privacy-First'],
       metrics: [
         'Real-time content detection and sanitization',
         'Real-time DOM inspection and blurring',
@@ -362,11 +365,12 @@ export default function App() {
     {
       id: 'edubond',
       title: 'EduBond Mobile',
+      subtitle: 'AI peer & mentor connection mobile app',
       category: 'AI / Mobile',
       featured: true,
       github: 'https://github.com/dandetejaswini/Edubond_mobile',
-      desc: 'React Native mobile application connecting students, mentors, and alumni through AI matching.',
-      tech: ['React Native', 'TypeScript', 'Node.js', 'AI Matching', 'Real-time Chat'],
+      desc: 'React Native mobile application connecting students, mentors, and alumni through intelligent profile matching algorithms.',
+      tech: ['React Native', 'TypeScript', 'Node.js', 'AI Matching', 'WebSockets'],
       metrics: [
         'Real-time WebSocket communication',
         'AI-driven peer and mentor matching',
@@ -377,11 +381,12 @@ export default function App() {
     {
       id: 'spendiq',
       title: 'SpendIQ',
+      subtitle: 'Smart barcode retail budgeting tool',
       category: 'FinTech / Web App',
       featured: true,
       github: '',
       live: 'https://spendiqpro.vercel.app/en',
-      desc: 'Client-side web application designed to reduce overspending and checkout queues via barcode scanning.',
+      desc: 'Web application reducing checkout queues and retail overspending using camera barcode scanning and budget limits.',
       tech: ['JavaScript', 'ZXing', 'WebRTC', 'Vercel', 'WCAG 2.1'],
       metrics: [
         '95% barcode scan accuracy',
@@ -392,11 +397,12 @@ export default function App() {
     },
     {
       id: 'nlp-pipeline',
-      title: 'Advanced NLP Pipeline with Transformers',
+      title: 'Advanced NLP Pipeline',
+      subtitle: 'High-throughput FastAPI inference engine',
       category: 'AI / NLP / Backend',
       featured: true,
       github: 'https://github.com/dandetejaswini/Advanced-NLP-Pipeline-with-Transformers',
-      desc: 'Robust FastAPI and Transformers pipeline for summarization, translation, and entity recognition.',
+      desc: 'FastAPI and HuggingFace Transformers pipeline for high-speed text summarization, translation, and entity recognition.',
       tech: ['Python', 'FastAPI', 'Transformers', 'Docker', 'Inference Caching'],
       metrics: [
         '50% API response latency reduction',
@@ -408,6 +414,7 @@ export default function App() {
     {
       id: 'reposense',
       title: 'RepoSense',
+      subtitle: 'Autonomous GitHub code risk analysis',
       category: 'AI / Developer Tools',
       featured: true,
       github: 'https://github.com/dandetejaswini/reposense',
@@ -423,11 +430,12 @@ export default function App() {
     {
       id: 'fraud-risk',
       title: 'Fraud Risk Scoring',
+      subtitle: 'Neural network transaction classification',
       category: 'Machine Learning',
       featured: false,
       github: 'https://github.com/dandetejaswini/Fraud_Risk_Scoring',
-      desc: 'Machine learning fraud detection system utilizing neural networks and SMOTE data balancing.',
-      tech: ['Python', 'TensorFlow', 'Scikit-Learn', 'SMOTE'],
+      desc: 'Machine learning fraud detection system utilizing deep neural networks and SMOTE data balancing.',
+      tech: ['Python', 'TensorFlow', 'Scikit-Learn', 'SMOTE', 'Pandas'],
       metrics: [
         'Neural network-based fraud classification',
         'High-risk transaction anomaly flagging',
@@ -486,21 +494,29 @@ export default function App() {
     ? projectsData 
     : projectsData.filter(p => p.category.toLowerCase().includes(filterCategory.toLowerCase()));
 
-  // Executive Pastel Design Tokens & Style Helpers
+  // Executive Pastel Design Tokens
   const isDark = theme === 'dark';
   const pageBgClass = isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900';
   const cardGlassClass = isDark 
     ? 'bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 hover:border-cyan-500/40 hover:shadow-cyan-500/5 transition-all shadow-lg' 
     : 'bg-white/70 backdrop-blur-xl border border-slate-200/80 hover:border-cyan-500/40 hover:shadow-md transition-all shadow-sm';
   const navGlassClass = isDark 
-    ? 'bg-slate-950/75 backdrop-blur-xl border-b border-slate-800/70' 
-    : 'bg-white/75 backdrop-blur-xl border-b border-slate-200/80';
+    ? 'bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/70' 
+    : 'bg-white/80 backdrop-blur-xl border-b border-slate-200/80';
   const textMutedClass = isDark ? 'text-slate-400' : 'text-slate-600';
   const inputBgClass = isDark ? 'bg-slate-900/60 border-slate-800 text-white placeholder-slate-500' : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-400';
 
   return (
     <div className={`min-h-screen ${pageBgClass} font-sans selection:bg-cyan-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
       
+      {/* FULL SCREEN BACKDROP OVERLAY - Mobile Menu Click-Outside Dismiss */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-[45] w-screen h-screen bg-slate-950/60 backdrop-blur-sm lg:hidden cursor-pointer"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Loading Screen */}
       {loading && (
         <div className={`fixed inset-0 z-50 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'} flex flex-col items-center justify-center transition-opacity duration-700`}>
@@ -534,7 +550,7 @@ export default function App() {
                 Welcome to My Profile
               </h1>
               <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Dande Tejaswini — Software Engineer & AI Developer
+                Dande Tejaswini — Software Engineer &amp; AI Developer
               </p>
             </div>
             <div className="pt-2">
@@ -617,101 +633,49 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile menu dropdown with backdrop click-outside dismiss */}
+        {/* Mobile menu dropdown */}
         {mobileMenuOpen && (
-          <>
-            <div 
-              className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <div className={`relative z-50 lg:hidden ${isDark ? 'bg-slate-900/95 text-slate-100 border-slate-800' : 'bg-white/95 text-slate-800 border-slate-200'} backdrop-blur-xl border-b px-6 py-4 space-y-3 text-sm shadow-2xl`}>
-              {[
-                { id: 'home', label: 'Home' },
-                { id: 'about', label: 'About' },
-                { id: 'skills', label: 'Skills' },
-                { id: 'projects', label: 'Projects' },
-                { id: 'journey', label: 'Journey (Experience & Education)' },
-                { id: 'credentials', label: 'Credentials (Certifications & Awards)' },
-                { id: 'contact', label: 'Contact' }
-              ].map((item) => (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-slate-700 dark:text-slate-300 hover:text-cyan-500 py-1.5 font-medium"
-                >
-                  {item.label}
-                </a>
-              ))}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
-                <a
-                  href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm w-full"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                  <span>Download Resume</span>
-                </a>
-              </div>
+          <div className={`relative z-50 lg:hidden ${isDark ? 'bg-slate-900/95 text-slate-100 border-slate-800' : 'bg-white/95 text-slate-800 border-slate-200'} backdrop-blur-xl border-b px-6 py-4 space-y-3 text-sm shadow-2xl`}>
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'about', label: 'About' },
+              { id: 'skills', label: 'Skills' },
+              { id: 'projects', label: 'Projects' },
+              { id: 'journey', label: 'Journey (Experience & Education)' },
+              { id: 'credentials', label: 'Credentials (Certifications & Awards)' },
+              { id: 'contact', label: 'Contact' }
+            ].map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-slate-700 dark:text-slate-300 hover:text-cyan-500 py-1.5 font-medium"
+              >
+                {item.label}
+              </a>
+            ))}
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+              <a
+                href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm w-full"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Download Resume</span>
+              </a>
             </div>
-          </>
+          </div>
         )}
       </header>
 
       {/* Home / Hero Section */}
       <section id="home" className="relative min-h-[90vh] flex items-center justify-center px-6 pt-32 pb-20 z-10">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="max-w-6xl mx-auto grid grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Name & Bio (Always Left on Desktop / Desktop Mode) */}
-          <div className="md:col-span-7 flex flex-col items-start justify-center order-1 space-y-6">
-            <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ${isDark ? 'bg-cyan-950/50 border-cyan-800/60 text-cyan-300' : 'bg-cyan-50 border-cyan-200 text-cyan-700'} border text-xs font-semibold tracking-wide uppercase`}>
-              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-              <span>Entry-Level Software Engineer &amp; AI Developer</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-              DANDE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500">TEJASWINI</span>
-            </h1>
-
-            <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
-              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
-            </p>
-
-            <div className="flex flex-wrap gap-3 pt-2">
-              <a
-                href="#projects"
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md shadow-cyan-500/20 transition-all hover:scale-[1.02]"
-              >
-                <span>Explore My Work</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/tejaswini-dande-826157258/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
-              >
-                <svg className="w-4 h-4 text-cyan-500 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                <span>LinkedIn</span>
-              </a>
-
-              <a
-                href="https://github.com/dandetejaswini"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                <span>GitHub</span>
-              </a>
-            </div>
-          </div>
-
-          {/* AI Talking Assistant Avatar Box (Always Right on Desktop / Desktop Mode) */}
-          <div className="md:col-span-5 flex flex-col items-center justify-center order-2">
+          {/* AI Talking Assistant Avatar Box (FIRST on Mobile `order-1`, RIGHT on Desktop `md:order-2`) */}
+          <div className="col-span-12 md:col-span-5 flex flex-col items-center justify-center order-1 md:order-2">
             <div className={`${cardGlassClass} p-6 rounded-3xl flex flex-col items-center relative group w-full max-w-sm`}>
               <div className="absolute -top-3 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
                 Tejaswini&apos;s AI Assistant
@@ -767,8 +731,6 @@ export default function App() {
                       </defs>
                       <path d="M22 45 C 20 20, 80 20, 78 45 C 82 65, 75 80, 72 88 C 65 78, 70 50, 70 45 C 70 25, 30 25, 30 45 C 30 50, 35 78, 28 88 C 25 80, 18 65, 22 45 Z" fill="#0f172a" />
                       <ellipse cx="50" cy="52" rx="18" ry="22" fill="#e0f2fe" />
-                      <ellipse cx="43" cy="48" rx="2.5" ry="3.5" fill="#0f172a" />
-                      <ellipse cx="57" cy="48" rx="2.5" ry="3.5" fill="#0f172a" />
                     </svg>
                   </div>
 
@@ -794,14 +756,13 @@ export default function App() {
                   {isPaused ? 'Tap avatar to Resume' : isSpeaking ? 'Tap avatar to Pause' : 'Tap avatar to Speak'}
                 </p>
 
-                {/* Hire Me Action Tile */}
+                {/* Hire Me Action Tile (No emoji) */}
                 <div className="w-full flex justify-center py-1">
                   <a
                     href="#contact"
                     onClick={() => handleAssistantQuery("Tejaswini is actively seeking Full-Time software engineering roles, AI developer positions, and entry-level opportunities! Please reach out via the contact form.")}
-                    className="max-w-[190px] w-full flex items-center justify-center space-x-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] text-center whitespace-nowrap"
+                    className="max-w-[190px] w-full flex items-center justify-center space-x-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] text-center whitespace-nowrap"
                   >
-                    <span className="animate-pulse text-xs">✨</span>
                     <span>Hire Tejaswini</span>
                   </a>
                 </div>
@@ -862,6 +823,52 @@ export default function App() {
             </div>
           </div>
 
+          {/* Name & Bio (SECOND on Mobile `order-2`, LEFT on Desktop `md:order-1`) */}
+          <div className="col-span-12 md:col-span-7 flex flex-col items-start justify-center order-2 md:order-1 space-y-6">
+            <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ${isDark ? 'bg-cyan-950/50 border-cyan-800/60 text-cyan-300' : 'bg-cyan-50 border-cyan-200 text-cyan-700'} border text-xs font-semibold tracking-wide uppercase`}>
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span>Entry-Level Software Engineer &amp; AI Developer</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+              DANDE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500">TEJASWINI</span>
+            </h1>
+
+            <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
+              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
+            </p>
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href="#projects"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md shadow-cyan-500/20 transition-all hover:scale-[1.02]"
+              >
+                <span>Explore My Work</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/tejaswini-dande-826157258/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
+              >
+                <svg className="w-4 h-4 text-cyan-500 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                <span>LinkedIn</span>
+              </a>
+
+              <a
+                href="https://github.com/dandetejaswini"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -873,7 +880,7 @@ export default function App() {
             <h3 className="text-3xl font-extrabold tracking-tight">About Me</h3>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className={`${cardGlassClass} p-8 rounded-3xl space-y-4`}>
               <h4 className="text-xl font-bold">Background &amp; Passion</h4>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
@@ -882,25 +889,54 @@ export default function App() {
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
                 From architecting autonomous multi-agent GitHub intelligence tools to building high-throughput FastAPI inference engines, I focus on engineering scalable, maintainable AI applications with seamless user experiences.
               </p>
+
+              {/* Target Engineering Roles (Matching Image 2) */}
+              <div className="pt-3 space-y-2 border-t border-slate-200 dark:border-slate-800">
+                <h5 className={`text-xs font-bold uppercase tracking-wider ${textMutedClass}`}>Specialized Roles</h5>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    'AI Engineer',
+                    'GenAI / LLM Engineer',
+                    'Software Engineer',
+                    'Full Stack Developer',
+                    'Salesforce Developer'
+                  ].map((role) => (
+                    <span 
+                      key={role} 
+                      className={`text-xs font-mono font-medium px-3.5 py-1.5 rounded-xl border shadow-xs transition-colors ${
+                        isDark 
+                          ? 'bg-slate-900/80 text-cyan-300 border-slate-800' 
+                          : 'bg-white text-slate-800 border-slate-200/80'
+                      }`}
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
+            {/* Metrics & Impact Cards (Matching Image 2 & 3) */}
             <div className="grid grid-cols-2 gap-4">
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5`}>
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
                 <span className="text-3xl font-black text-cyan-500">10+</span>
-                <h5 className="text-sm font-bold">Production Projects</h5>
-                <p className={`text-xs ${textMutedClass}`}>AI, Full-Stack &amp; Salesforce</p>
+                <h5 className="text-sm font-bold">Projects Shipped</h5>
+                <p className={`text-xs ${textMutedClass}`}>AI, software engineering &amp; Salesforce solutions</p>
               </div>
 
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5`}>
-                <span className="text-3xl font-black text-indigo-500">7+</span>
-                <h5 className="text-sm font-bold">Certifications</h5>
-                <p className={`text-xs ${textMutedClass}`}>Salesforce, Python, Java</p>
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
+                <span className="text-3xl font-black text-indigo-500">6</span>
+                <h5 className="text-sm font-bold">AI Domains</h5>
+                <p className={`text-xs ${textMutedClass}`}>GenAI, Agentic AI, RAG, NLP, ML &amp; Automation</p>
               </div>
 
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5 col-span-2`}>
-                <span className="text-2xl font-black text-violet-500">B.Tech CSE (Completed 2026)</span>
-                <h5 className="text-sm font-bold">Aditya University</h5>
-                <p className={`text-xs ${textMutedClass}`}>CGPA: 8.64 / 10 • Fresher Candidate</p>
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2 col-span-2`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-black text-violet-500">7+</span>
+                  <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20">Verified Badges</span>
+                </div>
+                <h5 className="text-sm font-bold">Certifications &amp; Credentials</h5>
+                <p className={`text-xs ${textMutedClass}`}>Salesforce Platform Dev I, Agentforce, Pega CSA, Red Hat RHCSA, Python &amp; Java</p>
               </div>
             </div>
           </div>
@@ -924,7 +960,7 @@ export default function App() {
               <h4 className="text-lg font-bold">Languages</h4>
               <div className="flex flex-wrap gap-2">
                 {['Python', 'Java', 'JavaScript', 'TypeScript', 'SQL', 'Apex'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
@@ -936,7 +972,7 @@ export default function App() {
               <h4 className="text-lg font-bold">Frameworks &amp; Web</h4>
               <div className="flex flex-wrap gap-2">
                 {['FastAPI', 'Flask', 'Node.js', 'React', 'React Native', 'LWC', 'REST APIs'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
@@ -948,7 +984,7 @@ export default function App() {
               <h4 className="text-lg font-bold">AI &amp; Data Tools</h4>
               <div className="flex flex-wrap gap-2">
                 {['LangChain', 'Transformers', 'TensorFlow', 'Scikit-Learn', 'CrewAI', 'LlamaIndex'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
@@ -960,7 +996,7 @@ export default function App() {
               <h4 className="text-lg font-bold">Enterprise Platforms</h4>
               <div className="flex flex-wrap gap-2">
                 {['Salesforce', 'AgentForce', 'PEGA', 'Docker', 'Git / GitHub', 'VS Code'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-mono font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
@@ -990,7 +1026,7 @@ export default function App() {
             ))}
           </div>
 
-          {/* Projects Grid */}
+          {/* Projects Grid (Matching Image 1 Reference Layout) */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.map((project) => (
               <div
@@ -1007,20 +1043,77 @@ export default function App() {
                       </span>
                     )}
                   </div>
-                  <h4 className="text-lg font-extrabold tracking-tight">{project.title}</h4>
+                  <div>
+                    <h4 className="text-lg font-extrabold tracking-tight">{project.title}</h4>
+                    {project.subtitle && (
+                      <p className="text-xs font-semibold text-sky-500 dark:text-sky-400 mt-0.5">{project.subtitle}</p>
+                    )}
+                  </div>
                   <p className={`text-xs ${textMutedClass} line-clamp-3 leading-relaxed`}>{project.desc}</p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-4 pt-1">
+                  {/* Colored Pastel Tech Stack Badges (Matching Image 1) */}
                   <div className="flex flex-wrap gap-1.5">
                     {project.tech.map((t) => (
-                      <span key={t} className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${isDark ? 'bg-slate-800/80 text-slate-300' : 'bg-slate-100 text-slate-700'}`}>{t}</span>
+                      <span 
+                        key={t} 
+                        className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-xl transition-colors ${
+                          isDark 
+                            ? 'bg-sky-950/60 text-sky-300 border border-sky-800/60' 
+                            : 'bg-sky-50 text-sky-800 border border-sky-200/80 shadow-xs'
+                        }`}
+                      >
+                        {t}
+                      </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs font-semibold text-cyan-500 pt-2 border-t border-slate-200 dark:border-slate-800">
-                    <span>View Architecture &amp; Metrics</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                  {/* Outlined Action Buttons (Matching Image 1: Architecture & Repo) */}
+                  <div className="flex items-center space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedProject(project); }}
+                      className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                        isDark
+                          ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border-slate-700/80'
+                          : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-200 shadow-xs'
+                      }`}
+                    >
+                      <svg className="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                      <span>Architecture</span>
+                    </button>
+                    
+                    {project.github ? (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                          isDark
+                            ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border-slate-700/80'
+                            : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-200 shadow-xs'
+                        }`}
+                      >
+                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        <span>Repo</span>
+                      </a>
+                    ) : (
+                      <a
+                        href={project.live}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`flex-1 inline-flex items-center justify-center space-x-1.5 text-xs font-semibold py-2 px-3 rounded-xl border transition-all ${
+                          isDark
+                            ? 'bg-slate-900/80 hover:bg-slate-800 text-cyan-400 border-slate-700/80'
+                            : 'bg-white hover:bg-slate-100 text-cyan-700 border-slate-200 shadow-xs'
+                        }`}
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        <span>Live</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1043,6 +1136,9 @@ export default function App() {
             <div className="space-y-2">
               <span className="text-xs font-bold text-cyan-500 uppercase tracking-widest">{selectedProject.category}</span>
               <h3 className="text-2xl font-black">{selectedProject.title}</h3>
+              {selectedProject.subtitle && (
+                <p className="text-xs font-semibold text-sky-500">{selectedProject.subtitle}</p>
+              )}
             </div>
 
             <p className={`text-sm ${textMutedClass} leading-relaxed`}>{selectedProject.details}</p>
