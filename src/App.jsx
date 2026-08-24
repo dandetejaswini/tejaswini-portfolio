@@ -41,14 +41,22 @@ export default function App() {
       cancelReturnTimer();
     };
 
+    const handleScrollCloseMenu = () => {
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
     window.addEventListener('wheel', handleUserInteraction, { passive: true });
     window.addEventListener('touchmove', handleUserInteraction, { passive: true });
+    window.addEventListener('scroll', handleScrollCloseMenu, { passive: true });
 
     return () => {
       window.removeEventListener('wheel', handleUserInteraction);
       window.removeEventListener('touchmove', handleUserInteraction);
+      window.removeEventListener('scroll', handleScrollCloseMenu);
     };
-  }, []);
+  }, [mobileMenuOpen]);
 
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
@@ -1270,10 +1278,16 @@ export default function App() {
         </div>
       </section>
 
-      {/* Project Detail Modal */}
+      {/* Project Detail Modal - Click Anywhere Outside to Dismiss */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md">
-          <div className={`relative max-w-2xl w-full ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-8 space-y-6 shadow-2xl border max-h-[90vh] overflow-y-auto`}>
+        <div 
+          onClick={() => setSelectedProject(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className={`relative max-w-2xl w-full ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-8 space-y-6 shadow-2xl border max-h-[90vh] overflow-y-auto cursor-default`}
+          >
             <button
               onClick={() => setSelectedProject(null)}
               className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white"
