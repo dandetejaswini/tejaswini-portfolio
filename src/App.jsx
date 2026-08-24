@@ -1063,7 +1063,6 @@ export default function App() {
                   <video
                     ref={videoRef}
                     src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
-                    autoPlay
                     playsInline
                     preload="auto"
                     className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
