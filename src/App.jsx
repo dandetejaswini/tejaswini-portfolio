@@ -123,7 +123,7 @@ export default function App() {
     setAssistantMessage(message);
     onVideoEndRef.current = onEndCallback;
 
-    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}`;
+    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}?v=${Date.now()}`;
     setActiveVideoSrc(videoUrl);
     setIsSpeaking(true);
     setIsPaused(false);
@@ -1038,7 +1038,7 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-slate-900 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
+                  className={`relative w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-transparent shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
                   style={{
                     perspective: '600px'
                   }}
