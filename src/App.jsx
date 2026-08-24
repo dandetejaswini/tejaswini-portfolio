@@ -123,10 +123,15 @@ export default function App() {
     setAssistantMessage(message);
     onVideoEndRef.current = onEndCallback;
 
-    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}`;
+    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}?v=${Date.now()}`;
     setActiveVideoSrc(videoUrl);
     setIsSpeaking(true);
     setIsPaused(false);
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.play().catch(() => {});
+      }
+    }, 50);
   };
 
   const handleAssistantClick = () => {
