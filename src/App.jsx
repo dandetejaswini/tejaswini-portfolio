@@ -127,10 +127,6 @@ export default function App() {
     setActiveVideoSrc(videoUrl);
     setIsSpeaking(true);
     setIsPaused(false);
-    if (videoRef.current) {
-      videoRef.current.src = videoUrl;
-      videoRef.current.play().catch(() => {});
-    }
   };
 
   const handleAssistantClick = () => {
@@ -1057,10 +1053,12 @@ export default function App() {
                     }
                   `}</style>
 
-                  {/* Video avatar stays permanently on screen - photo avatar.jpg is never shown after talking */}
+                  {/* Video avatar stays permanently on screen & plays instantly on single click */}
                   <video
                     ref={videoRef}
+                    key={activeVideoSrc}
                     src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
+                    autoPlay
                     playsInline
                     preload="auto"
                     className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
