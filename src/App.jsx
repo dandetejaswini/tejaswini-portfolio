@@ -468,7 +468,7 @@ export default function App() {
       window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [showWelcome, theme]);
+  }, [showWelcome, loading, theme]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
