@@ -179,7 +179,7 @@ export default function App() {
   const handleNavEducation = () => {
     playAssistantVideo(
       'education.mp4',
-      "Tejaswini is pursuing her B.Tech in Computer Science and Engineering at Aditya University with a CGPA of 8.64. She completed Intermediate in MPC with 96.7 percent and 10th standard with 96.66 percent."
+      "Tejaswini has completed her B.Tech in Computer Science and Engineering from Aditya University with a CGPA of 8.64. She completed her Intermediate in MPC with 96.7% and her 10th standard with 96.66%."
     );
   };
 
