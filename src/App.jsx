@@ -240,7 +240,7 @@ export default function App() {
     handleResize();
 
     const particles = [];
-    const colors = isDark 
+    const colors = theme === 'dark' 
       ? ['#06b6d4', '#6366f1', '#8b5cf6', '#3b82f6'] 
       : ['#0891b2', '#4f46e5', '#7c3aed', '#2563eb'];
       
@@ -394,7 +394,7 @@ export default function App() {
       window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [showWelcome, isDark]);
+  }, [showWelcome, theme]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
