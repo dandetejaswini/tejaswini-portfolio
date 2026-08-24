@@ -1298,31 +1298,31 @@ export default function App() {
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
-                <span className="text-3xl font-black text-indigo-500">6</span>
+                <span className="text-3xl font-black text-cyan-500">6</span>
                 <h5 className="text-sm font-bold">AI Domains</h5>
                 <p className={`text-xs ${textMutedClass}`}>GenAI, Agentic AI, RAG, NLP, ML, and AI automation</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
-                <span className="text-3xl font-black text-violet-500">7+</span>
+                <span className="text-3xl font-black text-cyan-500">7+</span>
                 <h5 className="text-sm font-bold">Certifications</h5>
                 <p className={`text-xs ${textMutedClass}`}>Salesforce Platform Dev I, Agentforce, Pega CSA, RHCSA, Python &amp; Java</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
-                <span className="text-3xl font-black text-sky-500">8.64</span>
+                <span className="text-3xl font-black text-cyan-500">8.64</span>
                 <h5 className="text-sm font-bold">B.Tech CGPA</h5>
                 <p className={`text-xs ${textMutedClass}`}>Computer Science &amp; Engineering Academic Distinction at Aditya University</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
-                <span className="text-3xl font-black text-teal-500">25%</span>
+                <span className="text-3xl font-black text-cyan-500">25%</span>
                 <h5 className="text-sm font-bold">Efficiency Boost</h5>
                 <p className={`text-xs ${textMutedClass}`}>Process optimization &amp; workflow automation in PEGA/Salesforce</p>
               </div>
 
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
-                <span className="text-3xl font-black text-emerald-500">95%+</span>
+                <span className="text-3xl font-black text-cyan-500">95%+</span>
                 <h5 className="text-sm font-bold">System Accuracy</h5>
                 <p className={`text-xs ${textMutedClass}`}>Barcode scanning precision &amp; ML transaction anomaly detection</p>
               </div>
@@ -1575,12 +1575,12 @@ export default function App() {
               <div className="space-y-6">
                 {experienceData.map((exp, idx) => (
                   <div key={idx} className={`${cardGlassClass} p-7 rounded-3xl space-y-4 relative overflow-hidden`}>
-                    <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div>
                         <h5 className="text-lg font-bold">{exp.role}</h5>
                         <p className="text-xs font-semibold text-cyan-500">{exp.company}</p>
                       </div>
-                      <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">
+                      <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">
                         {exp.period}
                       </span>
                     </div>
@@ -1598,10 +1598,10 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Column: Academic Degrees (Clean Years on Right) */}
+            {/* Right Column: Academic Degrees */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-slate-800">
-                <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                 </div>
                 <h4 className="text-xl font-extrabold">Academic Background</h4>
@@ -1622,22 +1622,22 @@ export default function App() {
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">Intermediate — MPC</h5>
-                    <span className="text-xs font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 self-start sm:self-auto">2020 – 2022</span>
+                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2020 – 2022</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Saraswathi Junior College — Ongole, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-indigo-300' : 'bg-indigo-50 text-indigo-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.7%</span>
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.7%</span>
                   </div>
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">10th Standard</h5>
-                    <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20 self-start sm:self-auto">2020</span>
+                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2020</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Chaitanya EM High School — Singarayakonda, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-violet-300' : 'bg-violet-50 text-violet-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.66%</span>
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.66%</span>
                   </div>
                 </div>
               </div>
@@ -1774,7 +1774,7 @@ export default function App() {
                 </div>
 
                 <div className={`flex items-center space-x-4 ${cardGlassClass} p-4 rounded-2xl`}>
-                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                   </div>
                   <div>
