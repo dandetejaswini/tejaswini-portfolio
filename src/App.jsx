@@ -845,12 +845,12 @@ export default function App() {
           
           {/* AI Talking Assistant Avatar Box (FIRST on Mobile `order-1`, RIGHT on Desktop `md:order-2`) */}
           <div className="col-span-12 md:col-span-5 flex flex-col items-center justify-center order-1 md:order-2">
-            <div className={`${cardGlassClass} p-6 rounded-3xl flex flex-col items-center relative group w-full max-w-sm`}>
-              <div className="absolute -top-3 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
+            <div className={`${cardGlassClass} p-4 sm:p-6 rounded-3xl flex flex-col items-center relative group w-full max-w-[360px] sm:max-w-[420px]`}>
+              <div className="absolute -top-3 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow z-20">
                 Tejaswini&apos;s AI Assistant
               </div>
               
-              <div className={`w-full max-w-[310px] sm:max-w-[340px] min-h-[380px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-slate-200'} rounded-3xl overflow-hidden flex flex-col items-center justify-between p-4 sm:p-6 border relative shadow-inner gap-4`}>
+              <div className={`w-full min-h-[410px] sm:min-h-[450px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-slate-200'} rounded-3xl overflow-hidden flex flex-col items-center justify-between p-5 sm:p-7 border relative shadow-inner gap-4`}>
                 
                 {/* AI Status Badge */}
                 <div className="w-full flex items-center justify-between px-1">
@@ -873,7 +873,7 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
+                  className={`relative w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
                   style={{
                     perspective: '600px'
                   }}
