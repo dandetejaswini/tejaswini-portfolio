@@ -123,15 +123,16 @@ export default function App() {
     setAssistantMessage(message);
     onVideoEndRef.current = onEndCallback;
 
-    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}?v=${Date.now()}`;
+    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}`;
     setActiveVideoSrc(videoUrl);
     setIsSpeaking(true);
     setIsPaused(false);
-    setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.play().catch(() => {});
-      }
-    }, 50);
+
+    if (videoRef.current) {
+      videoRef.current.src = videoUrl;
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+    }
   };
 
   const handleAssistantClick = () => {
@@ -1058,10 +1059,9 @@ export default function App() {
                     }
                   `}</style>
 
-                  {/* Video avatar stays permanently on screen & plays instantly on single click */}
+                  {/* Permanent Video element - never unmounts, transitions seamlessly */}
                   <video
                     ref={videoRef}
-                    key={activeVideoSrc}
                     src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
                     autoPlay
                     playsInline
