@@ -1464,11 +1464,9 @@ export default function App() {
 
               <div className="space-y-6">
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
-                  <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">B.Tech — Computer Science &amp; Engineering (CSE)</h5>
-                    <div>
-                      <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 inline-block">2022 – 2026</span>
-                    </div>
+                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2022 – 2026</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College) — Surampalem, AP</p>
                   <div className="pt-2">
@@ -1477,11 +1475,9 @@ export default function App() {
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
-                  <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">Intermediate — MPC</h5>
-                    <div>
-                      <span className="text-xs font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 inline-block">2020 – 2022</span>
-                    </div>
+                    <span className="text-xs font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 self-start sm:self-auto">2020 – 2022</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Saraswathi Junior College — Ongole, AP</p>
                   <div className="pt-2">
@@ -1490,11 +1486,9 @@ export default function App() {
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
-                  <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">10th Standard</h5>
-                    <div>
-                      <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20 inline-block">2020</span>
-                    </div>
+                    <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20 self-start sm:self-auto">2020</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Chaitanya EM High School — Singarayakonda, AP</p>
                   <div className="pt-2">
