@@ -18,15 +18,17 @@ export default function App() {
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState(null);
   
-  // AI Assistant Speech State
+  // AI Assistant Speech & Video Avatar State
   const [assistantMessage, setAssistantMessage] = useState(
     "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!"
   );
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [activeVideoSrc, setActiveVideoSrc] = useState(null);
 
   const canvasRef = useRef(null);
   const speechRef = useRef(null);
+  const videoRef = useRef(null);
   const returnTimerRef = useRef(null);
 
   const cancelReturnTimer = () => {
@@ -891,21 +893,43 @@ export default function App() {
                     }
                   `}</style>
 
-                  <img 
-                    src={`${import.meta.env.BASE_URL}avatar.jpg`} 
-                    alt="Tejaswini AI Assistant" 
-                    className={`w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
-                    style={{
-                      animation: isSpeaking ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
-                      transformOrigin: 'center center'
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      if (e.currentTarget.nextElementSibling) {
-                        e.currentTarget.nextElementSibling.style.display = 'block';
-                      }
-                    }}
-                  />
+                  {activeVideoSrc ? (
+                    <video
+                      ref={videoRef}
+                      src={activeVideoSrc}
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-cover rounded-full"
+                      onPlay={() => {
+                        setIsSpeaking(true);
+                        setIsPaused(false);
+                      }}
+                      onEnded={() => {
+                        setIsSpeaking(false);
+                        setIsPaused(false);
+                        setActiveVideoSrc(null);
+                      }}
+                      onError={() => {
+                        setActiveVideoSrc(null);
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src={`${import.meta.env.BASE_URL}avatar.jpg`} 
+                      alt="Tejaswini AI Assistant" 
+                      className={`w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
+                      style={{
+                        animation: isSpeaking ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
+                        transformOrigin: 'center center'
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'block';
+                        }
+                      }}
+                    />
+                  )}
 
                   {/* Fallback Vector */}
                   <div className="hidden w-full h-full relative">
