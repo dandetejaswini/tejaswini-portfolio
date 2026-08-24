@@ -239,148 +239,87 @@ export default function App() {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    const particles = [];
-    const colors = theme === 'dark' 
-      ? ['#06b6d4', '#6366f1', '#8b5cf6', '#3b82f6'] 
-      : ['#0891b2', '#4f46e5', '#7c3aed', '#2563eb'];
-      
-    let lastMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let hasMoved = false;
+    // Store trail points for the glowing light drag effect
+    const trail = [];
+    const MAX_TRAIL = 50;
+
+    const addPoint = (x, y) => {
+      trail.push({ x, y, time: Date.now() });
+      if (trail.length > MAX_TRAIL) trail.shift();
+    };
 
     const handleMouseMove = (e) => {
-      lastMousePos.x = e.clientX;
-      lastMousePos.y = e.clientY;
-      hasMoved = true;
-      
-      // Spawn particles on cursor move
-      for (let i = 0; i < 2; i++) {
-        particles.push({
-          x: e.clientX,
-          y: e.clientY,
-          vx: (Math.random() - 0.5) * 2.5,
-          vy: (Math.random() - 0.5) * 2.5,
-          radius: Math.random() * 5 + 3,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          alpha: 1,
-          decay: Math.random() * 0.015 + 0.01
-        });
-      }
+      addPoint(e.clientX, e.clientY);
     };
 
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        lastMousePos.x = touch.clientX;
-        lastMousePos.y = touch.clientY;
-        hasMoved = true;
-        
-        for (let i = 0; i < 2; i++) {
-          particles.push({
-            x: touch.clientX,
-            y: touch.clientY,
-            vx: (Math.random() - 0.5) * 2.5,
-            vy: (Math.random() - 0.5) * 2.5,
-            radius: Math.random() * 5 + 3,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            alpha: 1,
-            decay: Math.random() * 0.015 + 0.01
-          });
-        }
+        addPoint(e.touches[0].clientX, e.touches[0].clientY);
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
-    // Floating background twinkling particles (twinkles if they do not interact)
-    const bgParticles = [];
-    for (let i = 0; i < 35; i++) {
-      bgParticles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        radius: Math.random() * 4 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.2,
-        baseAlpha: Math.random() * 0.5 + 0.2,
-        twinkleSpeed: Math.random() * 0.03 + 0.01,
-        angle: Math.random() * Math.PI * 2
-      });
-    }
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const now = Date.now();
 
-      // Render & update floating background particles
-      bgParticles.forEach(bp => {
-        bp.x += bp.vx;
-        bp.y += bp.vy;
-        
-        if (bp.x < 0) bp.x = canvas.width;
-        if (bp.x > canvas.width) bp.x = 0;
-        if (bp.y < 0) bp.y = canvas.height;
-        if (bp.y > canvas.height) bp.y = 0;
-
-        bp.angle += bp.twinkleSpeed;
-        bp.alpha = bp.baseAlpha + Math.sin(bp.angle) * 0.25;
-        if (bp.alpha < 0.05) bp.alpha = 0.05;
-
-        ctx.save();
-        ctx.globalAlpha = bp.alpha;
-        ctx.beginPath();
-        ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
-        ctx.fillStyle = bp.color;
-        ctx.shadowBlur = bp.radius * 2;
-        ctx.shadowColor = bp.color;
-        ctx.fill();
-        ctx.restore();
-      });
-
-      // Automated twinkling circular rounds that move across if mouse does not tap
-      if (!hasMoved) {
-        const time = Date.now() * 0.0008;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = Math.min(canvas.width, canvas.height) * 0.25;
-        const orbX = centerX + Math.cos(time * 1.1) * radius * 1.5;
-        const orbY = centerY + Math.sin(time * 0.7) * radius;
-        
-        if (Math.random() < 0.25) {
-          particles.push({
-            x: orbX,
-            y: orbY,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: (Math.random() - 0.5) * 1.2,
-            radius: Math.random() * 4 + 2.5,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            alpha: 0.8,
-            decay: Math.random() * 0.01 + 0.008
-          });
-        }
+      // Remove old trail points (fade after 800ms)
+      while (trail.length > 0 && now - trail[0].time > 800) {
+        trail.shift();
       }
 
-      // Cursor trail render
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= p.decay;
+      if (trail.length > 1) {
+        // Draw connected glowing blue light trail
+        for (let i = 1; i < trail.length; i++) {
+          const prev = trail[i - 1];
+          const curr = trail[i];
+          const age = now - curr.time;
+          const alpha = Math.max(0, 1 - age / 800);
+          const lineWidth = Math.max(1, (1 - age / 800) * 6);
 
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = '#06b6d4';
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = '#06b6d4';
+          ctx.beginPath();
+          ctx.moveTo(prev.x, prev.y);
+          ctx.lineTo(curr.x, curr.y);
+          ctx.stroke();
+          ctx.restore();
         }
 
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.shadowBlur = p.radius * 2;
-        ctx.shadowColor = p.color;
-        ctx.fill();
-        ctx.restore();
+        // Bright glowing dot at cursor tip
+        const tip = trail[trail.length - 1];
+        const tipAge = now - tip.time;
+        if (tipAge < 200) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, 1 - tipAge / 200);
+          
+          // Outer glow
+          const gradient = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 22);
+          gradient.addColorStop(0, 'rgba(6, 182, 212, 0.7)');
+          gradient.addColorStop(0.4, 'rgba(99, 102, 241, 0.3)');
+          gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(tip.x, tip.y, 22, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Bright white-blue center
+          ctx.beginPath();
+          ctx.arc(tip.x, tip.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#e0f7ff';
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = '#06b6d4';
+          ctx.fill();
+          ctx.restore();
+        }
       }
 
       animationFrameId = requestAnimationFrame(animate);
