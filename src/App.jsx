@@ -107,10 +107,10 @@ export default function App() {
     }
   };
 
-  const smoothScrollTo = (elementId) => {
+  const jumpToSection = (elementId) => {
     const el = document.getElementById(elementId);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
   };
 
@@ -204,8 +204,8 @@ export default function App() {
       'hire.mp4',
       "Interested in working with Tejaswini? She is open to opportunities in Software Engineering, AI and Machine Learning, Backend Development, Full Stack Development, Salesforce, PEGA, Automation, and other technology-focused roles. Let's connect.",
       () => {
-        // Smooth scroll to contact form AFTER hire video finishes talking!
-        smoothScrollTo('contact');
+        // Direct jump to contact form AFTER hire video finishes talking!
+        jumpToSection('contact');
       }
     );
   };
@@ -400,8 +400,8 @@ export default function App() {
       const successText = "Thank you for reaching out! Your message has been sent successfully to Tejaswini. She'll get back to you as soon as possible.";
       setFormStatus({ type: 'success', text: successText });
 
-      // Smoothly navigate back to Hero section and play contact_success.mp4 video avatar!
-      smoothScrollTo('home');
+      // Direct jump back to Hero section and play contact_success.mp4 video avatar!
+      jumpToSection('home');
       const spokenSuccess = "Thank you for reaching out to Tejaswini. Your message has been sent successfully!";
       playAssistantVideo('contact_success.mp4', spokenSuccess);
 
@@ -873,17 +873,17 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
+                  className={`relative w-52 h-52 sm:w-60 sm:h-60 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-2xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
                   style={{
                     perspective: '600px'
                   }}
                 >
                   <style>{`
                     @keyframes talkingHead3D {
-                      0%, 100% { transform: scale(1.1) rotate(0deg) translateY(0px) rotateY(0deg); }
-                      25% { transform: scale(1.13) rotate(2deg) translateY(-3px) rotateY(-4deg); }
-                      50% { transform: scale(1.11) rotate(-2deg) translateY(1px) rotateY(4deg); }
-                      75% { transform: scale(1.14) rotate(1.5deg) translateY(-2px) rotateY(-2deg); }
+                      0%, 100% { transform: scale(1.3) rotate(0deg) translateY(0px) rotateY(0deg); }
+                      25% { transform: scale(1.33) rotate(2deg) translateY(-3px) rotateY(-4deg); }
+                      50% { transform: scale(1.31) rotate(-2deg) translateY(1px) rotateY(4deg); }
+                      75% { transform: scale(1.34) rotate(1.5deg) translateY(-2px) rotateY(-2deg); }
                     }
                     @keyframes lipSyncTalkingMouth {
                       0%, 100% { transform: scaleY(0.2) scaleX(0.85); opacity: 0.6; }
@@ -900,7 +900,7 @@ export default function App() {
                       src={activeVideoSrc}
                       autoPlay
                       playsInline
-                      className="w-full h-full object-cover rounded-full overflow-hidden"
+                      className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
                       onPlay={() => {
                         setIsSpeaking(true);
                         setIsPaused(false);
