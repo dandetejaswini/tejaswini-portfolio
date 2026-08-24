@@ -30,6 +30,7 @@ export default function App() {
   const speechRef = useRef(null);
   const videoRef = useRef(null);
   const returnTimerRef = useRef(null);
+  const onVideoEndRef = useRef(null);
 
   const cancelReturnTimer = () => {
     if (returnTimerRef.current) {
@@ -106,105 +107,106 @@ export default function App() {
     }
   };
 
-  const handleAssistantClick = () => {
+  const smoothScrollTo = (elementId) => {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const playAssistantVideo = (videoName, message, onEndCallback = null) => {
     if ('speechSynthesis' in window) {
-      if (isSpeaking && !isPaused) {
-        window.speechSynthesis.pause();
-        setIsPaused(true);
-        setIsSpeaking(false);
-      } else if (isPaused) {
-        window.speechSynthesis.resume();
+      window.speechSynthesis.cancel();
+    }
+    cancelReturnTimer();
+    setAssistantMessage(message);
+    onVideoEndRef.current = onEndCallback;
+
+    const videoUrl = `${import.meta.env.BASE_URL}avatar_videos/${videoName}`;
+    setActiveVideoSrc(videoUrl);
+    setIsSpeaking(true);
+    setIsPaused(false);
+  };
+
+  const handleAssistantClick = () => {
+    if (activeVideoSrc && videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
         setIsPaused(false);
         setIsSpeaking(true);
       } else {
-        speakText(assistantMessage);
+        videoRef.current.pause();
+        setIsPaused(true);
+        setIsSpeaking(false);
       }
-    }
-  };
-
-  // Section Voice Navigation Handlers (returns to Hero after speech completes)
-  const triggerSectionNavigation = (sectionId, message, autoReturn = true) => {
-    cancelReturnTimer();
-    setAssistantMessage(message);
-    setIsPaused(false);
-
-    const targetEl = document.getElementById(sectionId);
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    if (autoReturn) {
-      // Return to Hero ONLY after speech finishes — not on a fixed timer
-      speakText(message, () => {
-        // Small buffer after speech ends so visitor can read the section
-        returnTimerRef.current = setTimeout(() => {
-          const heroEl = document.getElementById('home');
-          if (heroEl) {
-            heroEl.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 1500);
-      });
     } else {
-      speakText(message);
+      playAssistantVideo(
+        'greeting.mp4',
+        "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!"
+      );
     }
   };
 
+  // AI Assistant Section Handlers (Plays video avatar in Hero without scrolling away)
   const handleNavAbout = () => {
-    triggerSectionNavigation(
-      'about',
+    playAssistantVideo(
+      'about.mp4',
       "Tejaswini is an entry-level Software Engineer and AI Developer with experience across AI, backend development, APIs, Salesforce, PEGA, automation, and software engineering."
     );
   };
 
   const handleNavSkills = () => {
-    triggerSectionNavigation(
-      'skills',
+    playAssistantVideo(
+      'skills.mp4',
       "Her skills span AI and machine learning, programming, backend and APIs, frontend development, Salesforce, PEGA, databases, DevOps, and core software engineering."
     );
   };
 
   const handleNavProjects = () => {
-    triggerSectionNavigation(
-      'projects',
+    playAssistantVideo(
+      'projects.mp4',
       "Tejaswini has built projects across AI, developer tools, security, mobile applications, FinTech, NLP, Salesforce, and automation."
     );
   };
 
   const handleNavJourney = () => {
-    triggerSectionNavigation(
-      'journey',
+    playAssistantVideo(
+      'journey.mp4',
       "Tejaswini's professional journey includes enterprise software, workflow automation, Salesforce development, API integration, and AI-driven application workflows."
     );
   };
 
   const handleNavEducation = () => {
-    triggerSectionNavigation(
-      'journey',
+    playAssistantVideo(
+      'education.mp4',
       "Tejaswini is pursuing her B.Tech in Computer Science and Engineering at Aditya University with a CGPA of 8.64. She completed Intermediate in MPC with 96.7 percent and 10th standard with 96.66 percent."
     );
   };
 
   const handleNavAchievements = () => {
     setCredentialsTab('achievements');
-    triggerSectionNavigation(
-      'credentials',
+    playAssistantVideo(
+      'achievements.mp4',
       "Her achievements include a Top 10 position in CODE WARS 1.0, second prize in a paper presentation, qualification for the OpenAI and NextWave State-Level Buildathon, and advancement to Round 3 of HP PowerLab 2.0."
     );
   };
 
   const handleNavCredentials = () => {
     setCredentialsTab('certifications');
-    triggerSectionNavigation(
-      'credentials',
+    playAssistantVideo(
+      'credentials.mp4',
       "Her certifications include Salesforce Platform Developer I, Salesforce AgentForce Specialist, Pega Certified System Architect, Red Hat Certified System Administrator, and Information Technology Specialist certifications."
     );
   };
 
   const handleNavHire = () => {
-    triggerSectionNavigation(
-      'contact',
+    playAssistantVideo(
+      'hire.mp4',
       "Interested in working with Tejaswini? She is open to opportunities in Software Engineering, AI and Machine Learning, Backend Development, Full Stack Development, Salesforce, PEGA, Automation, and other technology-focused roles. Let's connect.",
-      false
+      () => {
+        // Smooth scroll to contact form AFTER hire video finishes talking!
+        smoothScrollTo('contact');
+      }
     );
   };
 
@@ -212,8 +214,7 @@ export default function App() {
     setShowWelcome(false);
     setLoading(false);
     const greetingText = "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!";
-    setAssistantMessage(greetingText);
-    speakText(greetingText);
+    playAssistantVideo('greeting.mp4', greetingText);
   };
 
   useEffect(() => {
@@ -399,10 +400,10 @@ export default function App() {
       const successText = "Thank you for reaching out! Your message has been sent successfully to Tejaswini. She'll get back to you as soon as possible.";
       setFormStatus({ type: 'success', text: successText });
 
-      // Spoken voice feedback upon contact success
+      // Smoothly navigate back to Hero section and play contact_success.mp4 video avatar!
+      smoothScrollTo('home');
       const spokenSuccess = "Thank you for reaching out to Tejaswini. Your message has been sent successfully!";
-      setAssistantMessage(spokenSuccess);
-      speakText(spokenSuccess);
+      playAssistantVideo('contact_success.mp4', spokenSuccess);
 
       setTimeout(() => {
         setFormData({ name: '', email: '', subject: '', message: '' });
@@ -899,7 +900,7 @@ export default function App() {
                       src={activeVideoSrc}
                       autoPlay
                       playsInline
-                      className="w-full h-full object-cover rounded-full"
+                      className="w-full h-full object-cover rounded-full overflow-hidden"
                       onPlay={() => {
                         setIsSpeaking(true);
                         setIsPaused(false);
@@ -908,9 +909,19 @@ export default function App() {
                         setIsSpeaking(false);
                         setIsPaused(false);
                         setActiveVideoSrc(null);
+                        if (onVideoEndRef.current) {
+                          const callback = onVideoEndRef.current;
+                          onVideoEndRef.current = null;
+                          callback();
+                        }
                       }}
                       onError={() => {
                         setActiveVideoSrc(null);
+                        if (onVideoEndRef.current) {
+                          const callback = onVideoEndRef.current;
+                          onVideoEndRef.current = null;
+                          callback();
+                        }
                       }}
                     />
                   ) : (
@@ -947,8 +958,8 @@ export default function App() {
                     </svg>
                   </div>
 
-                  {/* Live Lip-Sync Mouth Articulation on Photo (No forehead/face soundbars) */}
-                  {isSpeaking && (
+                  {/* Live Lip-Sync Mouth Articulation on Photo (Only when fallback photo is shown) */}
+                  {!activeVideoSrc && isSpeaking && (
                     <div 
                       className="absolute pointer-events-none rounded-full bg-rose-950/70 border border-rose-400/50 shadow-inner"
                       style={{
