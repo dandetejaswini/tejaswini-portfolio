@@ -719,7 +719,7 @@ export default function App() {
     { year: '2024', title: 'Top 10 — CODE WARS 1.0', org: 'ACM JNTU-GV', desc: 'Achieved top 10 ranking in competitive algorithmic programming challenge.' },
     { year: '2024', title: 'Qualified — OpenAI & NextWave Buildathon', org: 'OpenAI / NextWave (State Level)', desc: 'Qualified in state-level competitive AI application buildathon.' },
     { year: '2024', title: 'Advanced to Round 3 — HP PowerLab 2.0', org: 'Hindustan Petroleum Corporation Limited', desc: 'Reached Round 3 in national innovation engineering challenge.' },
-    { year: 'Open Source', title: 'Google Summer of Code — Contributions', org: 'Open Source Ecosystem', desc: 'Contributed to AI tool ecosystems including LangChain, LlamaIndex, and CrewAI.' }
+    { year: '2024', title: 'Google Summer of Code — Contributions', org: 'Open Source Ecosystem', desc: 'Contributed to AI tool ecosystems including LangChain, LlamaIndex, and CrewAI.' }
   ];
 
   // Exactly structured 8 Skills Categories
@@ -1716,7 +1716,7 @@ export default function App() {
             <div className="space-y-4">
               {achievementsData.map((item, idx) => (
                 <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl flex flex-wrap sm:flex-nowrap items-start gap-4`}>
-                  <span className={`text-xs font-medium px-3 py-1 rounded-full border shrink-0 ${
+                  <span className={`w-28 text-center justify-center text-xs font-medium px-3 py-1 rounded-full border shrink-0 ${
                     isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
                   }`}>
                     {item.year}
