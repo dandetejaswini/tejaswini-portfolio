@@ -8,9 +8,10 @@ export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [filterCategory, setFilterCategory] = useState('All');
+  const [credentialsTab, setCredentialsTab] = useState('certifications');
   
   // Light / Dark Theme State
-  const [theme, setTheme] = useState('light'); // Default theme is Light Mode
+  const [theme, setTheme] = useState('light');
   
   // Contact Form State
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -112,22 +113,41 @@ export default function App() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Create rotating particle field
-    const particlesCount = 900;
+    // Smooth circular canvas texture for elegant ambient background particles
+    const circleCanvas = document.createElement('canvas');
+    circleCanvas.width = 16;
+    circleCanvas.height = 16;
+    const ctx = circleCanvas.getContext('2d');
+    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.4)');
+    grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(8, 8, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    const particleTexture = new THREE.CanvasTexture(circleCanvas);
+
+    const particlesCount = 750;
     const posArray = new Float32Array(particlesCount * 3);
 
     for(let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 16;
+      posArray[i] = (Math.random() - 0.5) * 18;
     }
 
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
+    const isDarkTheme = theme === 'dark';
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.04,
-      color: theme === 'dark' ? 0xec4899 : 0xdb2777,
+      size: 0.1,
+      map: particleTexture,
+      color: isDarkTheme ? 0x38bdf8 : 0x0284c7,
       transparent: true,
-      opacity: theme === 'dark' ? 0.85 : 0.75
+      opacity: isDarkTheme ? 0.5 : 0.35,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
     });
 
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -141,8 +161,8 @@ export default function App() {
     let targetY = 0;
 
     const handlePointerMove = (clientX, clientY) => {
-      targetX = (clientX / window.innerWidth - 0.5) * 1.5;
-      targetY = (clientY / window.innerHeight - 0.5) * 1.5;
+      targetX = (clientX / window.innerWidth - 0.5) * 1.2;
+      targetY = (clientY / window.innerHeight - 0.5) * 1.2;
     };
 
     const handleMouseMove = (event) => {
@@ -170,14 +190,14 @@ export default function App() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       
-      particlesMesh.rotation.y += 0.0008;
-      particlesMesh.rotation.x += 0.0004;
+      particlesMesh.rotation.y += 0.0006;
+      particlesMesh.rotation.x += 0.0003;
 
-      mouseX += (targetX - mouseX) * 0.12;
-      mouseY += (targetY - mouseY) * 0.12;
+      mouseX += (targetX - mouseX) * 0.1;
+      mouseY += (targetY - mouseY) * 0.1;
 
-      camera.position.x = mouseX * 1.8;
-      camera.position.y = -mouseY * 1.8;
+      camera.position.x = mouseX * 1.5;
+      camera.position.y = -mouseY * 1.5;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
@@ -254,9 +274,7 @@ export default function App() {
           _captcha: "false"
         })
       });
-    } catch (err) {
-      console.error("Email delivery attempt completed:", err);
-    } finally {
+
       setFormSubmitting(false);
       setFormStatus({ type: 'success', text: 'Message Sent Successfully!' });
 
@@ -264,12 +282,15 @@ export default function App() {
         setFormData({ name: '', email: '', message: '' });
         setFormStatus(null);
       }, 2000);
+    } catch (err) {
+      setFormSubmitting(false);
+      setFormStatus({ type: 'error', text: 'Failed to send message. Please try again later.' });
     }
   };
 
   useEffect(() => {
     const handleScrollSpy = () => {
-      const sections = ['home', 'about', 'skills', 'experience', 'projects', 'achievements', 'certifications', 'education', 'contact'];
+      const sections = ['home', 'about', 'skills', 'projects', 'journey', 'credentials', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -319,14 +340,14 @@ export default function App() {
         'Multi-agent workflow orchestration',
         'Intelligent commit summarization'
       ],
-      details: 'Engineered an intelligent multi-agent JavaScript system designed to scan repositories, summarize architectural changes, and assist developers with deep repository intelligence.'
+      details: 'Multi-agent orchestration system that interfaces with GitHub APIs to parse repository structures, evaluate commit histories, and generate autonomous project health reports.'
     },
     {
       id: 'netguardian',
       title: 'NetGuardian',
       category: 'AI / Security',
       featured: true,
-      badge: 'Qualified: OpenAI Academy & NextWave Buildathon (State Level)',
+      badge: 'Qualified: OpenAI Academy & NextWave Buildathon',
       github: 'https://github.com/dandetejaswini/Net-Gaurdian',
       desc: 'Chrome extension for safer browsing that detects and blurs inappropriate content using lightweight AI. Qualified for OpenAI Academy & NextWave Buildathon.',
       tech: ['TypeScript', 'Chrome Extension', 'Flask', 'NLP', 'Privacy-First'],
@@ -341,7 +362,7 @@ export default function App() {
     {
       id: 'edubond',
       title: 'EduBond Mobile',
-      category: 'AI / Education / Mobile',
+      category: 'AI / Mobile',
       featured: true,
       github: 'https://github.com/dandetejaswini/Edubond_mobile',
       desc: 'React Native mobile application connecting students, mentors, and alumni through AI matching.',
@@ -387,10 +408,10 @@ export default function App() {
     {
       id: 'reposense',
       title: 'RepoSense',
-      category: 'AI / Developer Tools / Automation',
+      category: 'AI / Developer Tools',
       featured: true,
       github: 'https://github.com/dandetejaswini/reposense',
-      desc: 'Autonomous AI-powered GitHub intelligence system that analyzes repositories, pull requests, code risks, and Git history to generate actionable engineering insights.',
+      desc: 'Autonomous AI-powered GitHub intelligence system that analyzes repositories, pull requests, code risks, and Git history.',
       tech: ['Python', 'Gemini API', 'GitHub API', 'FastAPI', 'PyDriller', 'Docker'],
       metrics: [
         'Multi-agent GitHub analysis',
@@ -409,40 +430,10 @@ export default function App() {
       tech: ['Python', 'TensorFlow', 'Scikit-Learn', 'SMOTE'],
       metrics: [
         'Neural network-based fraud classification',
-        'Model training and validation for high-risk transactions',
-        'Handled severe dataset class imbalance using SMOTE'
+        'High-risk transaction anomaly flagging',
+        'Balanced datasets using SMOTE technique'
       ],
       details: 'Trained and validated robust neural network classification models to flag high-risk transaction anomalies.'
-    },
-    {
-      id: 'weather-app',
-      title: 'Weather App using api Integration',
-      category: 'Salesforce / API',
-      featured: false,
-      github: 'https://github.com/dandetejaswini/Weather-App-Using-API-Integration',
-      desc: 'Real-time weather application built within Salesforce using Lightning Web Components.',
-      tech: ['Salesforce LWC', 'SLDS', 'REST API', 'JavaScript'],
-      metrics: [
-        'Real-time weather data retrieval through external API',
-        'Lightning Web Components-based weather interface',
-        'Dynamic weather metrics rendering inside Salesforce UI'
-      ],
-      details: 'Integrated external meteorology APIs directly into Salesforce Lightning Experience using LWC and SLDS.'
-    },
-    {
-      id: 'ai-email',
-      title: 'AI Email Generator',
-      category: 'AI / Backend',
-      featured: false,
-      github: 'https://github.com/dandetejaswini/Email-Generator-Using-Langchain-Flask',
-      desc: 'Context-aware professional email generator powered by LangChain and Flask.',
-      tech: ['Python', 'Flask', 'LangChain', 'Prompt Engineering'],
-      metrics: [
-        'Modular Flask REST endpoints',
-        'Context-aware professional email drafting',
-        'Structured multi-parameter email orchestration'
-      ],
-      details: 'Streamlined corporate correspondence drafting through structured prompt templates and modular Flask REST endpoints.'
     }
   ];
 
@@ -452,55 +443,82 @@ export default function App() {
     { title: 'Salesforce Platform Developer I', issuer: 'Salesforce (2025)', link: 'https://drive.google.com/file/d/1Wn7lNAck8JIJrMXh8YRIvphJWs31D0Yu/view?usp=sharing' },
     { title: 'Salesforce AgentForce Specialist', issuer: 'Salesforce (2025)', link: 'https://drive.google.com/file/d/1BgGL9qyufgqqAo9wG37pRYiYUYQ9PW8W/view?usp=sharing' },
     { title: 'Information Technology Specialist in Java', issuer: 'Certiport (2024)', link: 'https://www.credly.com/badges/6064c502-5e2f-472b-a57f-2c49568a6fcc' },
-    { title: 'Red Hat Certified System Administrator (RHCSA)', issuer: 'Red Hat (2024 — Expired Aug 2025)', link: 'https://www.credly.com/badges/56c15cb2-cd42-43df-a140-10d5273c792f' },
+    { title: 'Red Hat Certified System Administrator (RHCSA)', issuer: 'Red Hat (2024)', link: 'https://www.credly.com/badges/56c15cb2-cd42-43df-a140-10d5273c792f' },
     { title: 'Pega Certified System Architect (CSA)', issuer: 'Pega (2025)', link: 'https://accounts.pega.com/profile/DandeTejaswini/share/BPEGACPSA24V1-PEGACPSA24V1' }
   ];
 
   const achievementsData = [
-    { year: '2024', title: 'Second Prize — Paper Presentation', org: 'Two-Day National Level Technical & Cultural Symposium, CIET, Guntur', desc: 'Secured 2nd prize for rigorous technical presentation.' },
-    { year: '2024', title: 'Top 10 — CODE WARS 1.0', org: 'ACM JNTU-GV (ITYUKTA-2K24)', desc: 'Achieved a top 10 ranking in competitive programming challenge.' },
-    { year: '2024', title: 'Qualified — OpenAI & NextWave Buildathon (State Level)', org: 'OpenAI / NextWave (State Level Buildathon)', desc: 'Successfully qualified in competitive state-level AI buildathon event.' },
-    { year: '2024', title: 'Advanced to Round 3 — HP PowerLab 2.0', org: 'Hindustan Petroleum Corporation Limited', desc: 'Reached Round 3 in national innovation challenge.' },
-    { year: 'Open Source', title: 'Google Summer of Code — Open Source Contribution', org: 'Open Source Ecosystem', desc: 'Contributed to open-source agent and tool ecosystems including LangChain, LlamaIndex, and CrewAI.' }
+    { year: '2024', title: 'Second Prize — Paper Presentation', org: 'National Technical Symposium, CIET', desc: 'Secured 2nd prize for technical paper presentation on emerging AI architectures.' },
+    { year: '2024', title: 'Top 10 — CODE WARS 1.0', org: 'ACM JNTU-GV', desc: 'Achieved top 10 ranking in competitive algorithmic programming challenge.' },
+    { year: '2024', title: 'Qualified — OpenAI & NextWave Buildathon', org: 'OpenAI / NextWave (State Level)', desc: 'Qualified in state-level competitive AI application buildathon.' },
+    { year: '2024', title: 'Advanced to Round 3 — HP PowerLab 2.0', org: 'Hindustan Petroleum Corporation Limited', desc: 'Reached Round 3 in national innovation engineering challenge.' },
+    { year: 'Open Source', title: 'Google Summer of Code — Contributions', org: 'Open Source Ecosystem', desc: 'Contributed to AI tool ecosystems including LangChain, LlamaIndex, and CrewAI.' }
+  ];
+
+  const experienceData = [
+    {
+      company: 'Areteans Technology Solutions',
+      role: 'PEGA Software Engineer Intern / Specialist',
+      period: 'Jan 2025 – Present',
+      location: 'Hyderabad, India',
+      badge: 'Current Internship',
+      points: [
+        'Engineered enterprise PEGA workflow solutions and case management rules.',
+        'Collaborated on client-facing business process automation and REST integrations.',
+        'Applied Pega Certified System Architect (CSA) principles to optimize application lifecycle.'
+      ]
+    },
+    {
+      company: 'Technical Hub',
+      role: 'Salesforce Software Engineering Intern',
+      period: 'May 2024 – Nov 2024',
+      location: 'Surampalem, AP',
+      badge: 'Completed',
+      points: [
+        'Developed custom Apex classes, triggers, and Lightning Web Components (LWC).',
+        'Integrated third-party REST API services into Salesforce CRM for real-time data sync.',
+        'Earned Salesforce Platform Developer I and AgentForce Specialist certifications.'
+      ]
+    }
   ];
 
   const filteredProjects = filterCategory === 'All' 
     ? projectsData 
     : projectsData.filter(p => p.category.toLowerCase().includes(filterCategory.toLowerCase()));
 
-  // Dynamic Theme Glassmorphism Style Classes
+  // Executive Pastel Design Tokens & Style Helpers
   const isDark = theme === 'dark';
   const pageBgClass = isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900';
   const cardGlassClass = isDark 
-    ? 'bg-slate-900/35 backdrop-blur-md border border-slate-800/60 hover:border-pink-500/50 hover:bg-slate-900/50 shadow-lg' 
-    : 'bg-white/40 backdrop-blur-md border border-white/60 hover:border-pink-400 hover:bg-white/60 shadow-sm';
+    ? 'bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 hover:border-cyan-500/40 hover:shadow-cyan-500/5 transition-all shadow-lg' 
+    : 'bg-white/70 backdrop-blur-xl border border-slate-200/80 hover:border-cyan-500/40 hover:shadow-md transition-all shadow-sm';
   const navGlassClass = isDark 
-    ? 'bg-slate-950/60 backdrop-blur-md border-b border-slate-800/60' 
-    : 'bg-white/50 backdrop-blur-md border-b border-slate-200/60';
+    ? 'bg-slate-950/75 backdrop-blur-xl border-b border-slate-800/70' 
+    : 'bg-white/75 backdrop-blur-xl border-b border-slate-200/80';
   const textMutedClass = isDark ? 'text-slate-400' : 'text-slate-600';
-  const inputBgClass = isDark ? 'bg-slate-900/50 border-slate-700/80 text-white placeholder-slate-500' : 'bg-white/50 border-slate-200 text-slate-800 placeholder-slate-400';
+  const inputBgClass = isDark ? 'bg-slate-900/60 border-slate-800 text-white placeholder-slate-500' : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-400';
 
   return (
-    <div className={`min-h-screen ${pageBgClass} font-sans selection:bg-pink-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
+    <div className={`min-h-screen ${pageBgClass} font-sans selection:bg-cyan-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
       
       {/* Loading Screen */}
       {loading && (
-        <div className={`fixed inset-0 z-50 ${isDark ? 'bg-slate-950' : 'bg-slate-50'} flex flex-col items-center justify-center transition-opacity duration-700`}>
-          <div className="w-12 h-12 border-3 border-pink-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <h2 className="text-xl font-bold tracking-wide">DANDE TEJASWINI</h2>
-          <p className={`text-sm ${textMutedClass} mt-1`}>Loading portfolio...</p>
+        <div className={`fixed inset-0 z-50 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'} flex flex-col items-center justify-center transition-opacity duration-700`}>
+          <div className="w-12 h-12 border-3 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <h2 className="text-xl font-bold tracking-wider uppercase">DANDE TEJASWINI</h2>
+          <p className={`text-xs ${textMutedClass} mt-1 tracking-widest`}>Loading Portfolio...</p>
         </div>
       )}
 
-      {/* Welcome Overlay - triggers speech on click (required by browser autoplay policy) */}
+      {/* Welcome Overlay - triggers speech on click */}
       {!loading && showWelcome && (
         <div 
           onClick={handleWelcomeEnter}
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer"
-          style={{ background: isDark ? 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #0f172a 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #fce7f3 40%, #f8fafc 100%)' }}
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6"
+          style={{ background: isDark ? 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e0f2fe 100%)' }}
         >
-          <div className="text-center space-y-6 animate-pulse-slow">
-            <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-pink-500 shadow-2xl shadow-pink-500/30">
+          <div className="text-center space-y-6 max-w-md mx-auto">
+            <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-cyan-500/80 shadow-2xl shadow-cyan-500/30 transition-transform hover:scale-105">
               <img 
                 src={`${import.meta.env.BASE_URL}avatar.jpg`}
                 alt="Tejaswini" 
@@ -508,50 +526,60 @@ export default function App() {
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
             </div>
-            <h1 className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Welcome to My Portfolio
-            </h1>
-            <p className={`text-sm sm:text-base ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Dande Tejaswini — Software Engineer & AI Developer
-            </p>
-            <div className="mt-8">
-              <span className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg shadow-pink-600/30 transition-all text-sm">
+            <div className="space-y-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 text-xs font-semibold uppercase tracking-wider">
+                Interactive Portfolio
+              </span>
+              <h1 className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Welcome to My Profile
+              </h1>
+              <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                Dande Tejaswini — Software Engineer & AI Developer
+              </p>
+            </div>
+            <div className="pt-2">
+              <span className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-semibold px-8 py-3.5 rounded-2xl shadow-lg shadow-cyan-500/25 transition-all text-sm">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Tap to Enter & Meet My AI Assistant
+                Tap to Enter &amp; Start AI Voice
               </span>
             </div>
-            <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'} animate-bounce mt-4`}>
+            <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'} animate-bounce pt-2`}>
               Click anywhere to continue
             </p>
           </div>
         </div>
       )}
 
-      {/* Persistent Background Three.js Canvas */}
+      {/* Ambient 3D Three.js Canvas */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 w-full h-full" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0 }} />
 
       {/* Header / Navbar */}
       <header className={`fixed top-0 left-0 right-0 z-50 ${navGlassClass} shadow-sm transition-all`}>
         <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
-          <a href="#home" className="text-lg font-bold tracking-tight flex items-center space-x-2 hover:opacity-85 transition-opacity">
-            <span className="w-3 h-3 rounded-full bg-pink-600 inline-block shadow-sm"></span>
-            <span>DANDE TEJASWINI</span>
+          <a href="#home" className="text-base sm:text-lg font-extrabold tracking-tight flex items-center space-x-2.5 hover:opacity-85 transition-opacity">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block shadow-sm shadow-cyan-500/50"></span>
+            <span className="tracking-wider">DANDE TEJASWINI</span>
           </a>
 
-          {/* Desktop Nav */}
+          {/* Desktop Navigation Links */}
           <nav className={`hidden lg:flex items-center space-x-6 text-sm font-medium ${textMutedClass}`}>
-            {['Home', 'About', 'Skills', 'Experience', 'Projects', 'Achievements', 'Certifications', 'Education', 'Contact'].map((item) => {
-              const id = item.toLowerCase();
-              return (
-                <a
-                  key={item}
-                  href={`#${id}`}
-                  className={`transition-colors hover:text-pink-500 py-1 ${activeSection === id ? 'text-pink-500 font-semibold border-b-2 border-pink-500' : ''}`}
-                >
-                  {item}
-                </a>
-              );
-            })}
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'about', label: 'About' },
+              { id: 'skills', label: 'Skills' },
+              { id: 'projects', label: 'Projects' },
+              { id: 'journey', label: 'Journey' },
+              { id: 'credentials', label: 'Credentials' },
+              { id: 'contact', label: 'Contact' }
+            ].map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`transition-colors hover:text-cyan-500 py-1 ${activeSection === item.id ? 'text-cyan-500 font-semibold border-b-2 border-cyan-500' : ''}`}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
 
           <div className="flex items-center space-x-3">
@@ -560,17 +588,17 @@ export default function App() {
               href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-xl transition-all shadow-sm"
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-3.5 sm:px-4 py-2 rounded-xl transition-all shadow-sm shadow-cyan-500/20"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               <span>Resume</span>
             </a>
 
-            {/* Dark / Light Toggle */}
+            {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`p-2.5 rounded-xl ${isDark ? 'bg-slate-800 text-amber-400 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'} transition-colors`}
-              title="Toggle Theme"
+              className={`p-2.5 rounded-xl ${isDark ? 'bg-slate-900 text-amber-400 hover:bg-slate-800 border border-slate-800' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'} transition-colors`}
+              title="Toggle Light/Dark Theme"
             >
               {isDark ? (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -596,27 +624,32 @@ export default function App() {
               className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className={`relative z-50 lg:hidden ${isDark ? 'bg-slate-900/95 text-slate-100 border-slate-800' : 'bg-white/95 text-slate-800 border-slate-200'} backdrop-blur-lg border-b px-6 py-4 space-y-3 text-sm shadow-xl`}>
-              {['Home', 'About', 'Skills', 'Experience', 'Projects', 'Achievements', 'Certifications', 'Education', 'Contact'].map((item) => {
-                const id = item.toLowerCase();
-                return (
-                  <a
-                    key={item}
-                    href={`#${id}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block text-slate-700 dark:text-slate-300 hover:text-pink-500 py-1 font-medium"
-                  >
-                    {item}
-                  </a>
-                );
-              })}
+            <div className={`relative z-50 lg:hidden ${isDark ? 'bg-slate-900/95 text-slate-100 border-slate-800' : 'bg-white/95 text-slate-800 border-slate-200'} backdrop-blur-xl border-b px-6 py-4 space-y-3 text-sm shadow-2xl`}>
+              {[
+                { id: 'home', label: 'Home' },
+                { id: 'about', label: 'About' },
+                { id: 'skills', label: 'Skills' },
+                { id: 'projects', label: 'Projects' },
+                { id: 'journey', label: 'Journey (Experience & Education)' },
+                { id: 'credentials', label: 'Credentials (Certifications & Awards)' },
+                { id: 'contact', label: 'Contact' }
+              ].map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-slate-700 dark:text-slate-300 hover:text-cyan-500 py-1.5 font-medium"
+                >
+                  {item.label}
+                </a>
+              ))}
               <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
                 <a
                   href="https://drive.google.com/file/d/1G8xsn_RT7sM7PSshHSp8GYhVI8rWRK-P/view?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm w-full"
+                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm w-full"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   <span>Download Resume</span>
@@ -631,28 +664,74 @@ export default function App() {
       <section id="home" className="relative min-h-[90vh] flex items-center justify-center px-6 pt-32 pb-20 z-10">
         <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* AI Talking Assistant Avatar Box */}
+          {/* Name & Bio (Always Left on Desktop / Desktop Mode) */}
+          <div className="md:col-span-7 flex flex-col items-start justify-center order-1 space-y-6">
+            <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ${isDark ? 'bg-cyan-950/50 border-cyan-800/60 text-cyan-300' : 'bg-cyan-50 border-cyan-200 text-cyan-700'} border text-xs font-semibold tracking-wide uppercase`}>
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span>Entry-Level Software Engineer &amp; AI Developer</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+              DANDE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500">TEJASWINI</span>
+            </h1>
+
+            <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
+              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
+            </p>
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href="#projects"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md shadow-cyan-500/20 transition-all hover:scale-[1.02]"
+              >
+                <span>Explore My Work</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/tejaswini-dande-826157258/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
+              >
+                <svg className="w-4 h-4 text-cyan-500 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                <span>LinkedIn</span>
+              </a>
+
+              <a
+                href="https://github.com/dandetejaswini"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
+
+          {/* AI Talking Assistant Avatar Box (Always Right on Desktop / Desktop Mode) */}
           <div className="md:col-span-5 flex flex-col items-center justify-center order-2">
             <div className={`${cardGlassClass} p-6 rounded-3xl flex flex-col items-center relative group w-full max-w-sm`}>
-              <div className="absolute -top-3 bg-pink-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
+              <div className="absolute -top-3 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
                 Tejaswini&apos;s AI Assistant
               </div>
               
-              <div className={`w-[260px] min-h-[350px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-pink-100'} rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5 border relative shadow-inner gap-3`}>
+              <div className={`w-[260px] min-h-[340px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-slate-200'} rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5 border relative shadow-inner gap-3`}>
                 
                 {/* AI Status Badge */}
                 <div className="w-full flex items-center justify-between px-1">
                   <div className="flex items-center space-x-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-emerald-400 animate-ping' : 'bg-pink-500'}`}></span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-pink-500">
+                    <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-cyan-400 animate-ping' : 'bg-cyan-500'}`}></span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-500">
                       {isSpeaking ? 'Speaking...' : isPaused ? 'Paused' : 'AI Assistant Active'}
                     </span>
                   </div>
                   {isSpeaking && (
                     <div className="flex items-end space-x-0.5 h-3">
-                      <span className="w-0.5 h-full bg-pink-500 animate-bounce"></span>
-                      <span className="w-0.5 h-2/3 bg-pink-400 animate-bounce" style={{ animationDelay: '0.15s' }}></span>
-                      <span className="w-0.5 h-full bg-pink-500 animate-bounce" style={{ animationDelay: '0.3s' }}></span>
+                      <span className="w-0.5 h-full bg-cyan-500 animate-bounce"></span>
+                      <span className="w-0.5 h-2/3 bg-indigo-400 animate-bounce" style={{ animationDelay: '0.15s' }}></span>
+                      <span className="w-0.5 h-full bg-cyan-500 animate-bounce" style={{ animationDelay: '0.3s' }}></span>
                     </div>
                   )}
                 </div>
@@ -661,7 +740,7 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600 shadow-xl ${isSpeaking ? 'border-pink-500 ring-4 ring-pink-500/30 scale-105' : 'border-pink-300/80 hover:border-pink-500'} transition-all duration-300 group/avatar shrink-0`}
+                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/30 scale-105' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
                 >
                   <img 
                     src={`${import.meta.env.BASE_URL}avatar.jpg`} 
@@ -675,40 +754,26 @@ export default function App() {
                     }}
                   />
 
-                  {/* Fallback Detailed AI Assistant Vector Illustration */}
+                  {/* Fallback Vector */}
                   <div className="hidden w-full h-full relative">
                     <svg className="w-full h-full p-1" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <circle cx="50" cy="50" r="48" fill="url(#avatarGlow)" />
                       <defs>
                         <linearGradient id="avatarGlow" x1="0" y1="0" x2="100" y2="100">
-                          <stop offset="0%" stopColor="#ec4899" />
-                          <stop offset="50%" stopColor="#8b5cf6" />
-                          <stop offset="100%" stopColor="#3b82f6" />
+                          <stop offset="0%" stopColor="#06b6d4" />
+                          <stop offset="50%" stopColor="#6366f1" />
+                          <stop offset="100%" stopColor="#8b5cf6" />
                         </linearGradient>
                       </defs>
-                      <path d="M22 45 C 20 20, 80 20, 78 45 C 82 65, 75 80, 72 88 C 65 78, 70 50, 70 45 C 70 25, 30 25, 30 45 C 30 50, 35 78, 28 88 C 25 80, 18 65, 22 45 Z" fill="#1e1b4b" />
-                      <ellipse cx="50" cy="52" rx="18" ry="22" fill="#fbcfe8" />
-                      <ellipse cx="43" cy="48" rx="2.5" ry="3.5" fill="#1e1b4b" />
-                      <ellipse cx="57" cy="48" rx="2.5" ry="3.5" fill="#1e1b4b" />
-                      <circle cx="44" cy="47" r="1" fill="#ffffff" />
-                      <circle cx="58" cy="47" r="1" fill="#ffffff" />
-                      <path d="M39 42 Q 43 40 47 43" stroke="#831843" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                      <path d="M53 43 Q 57 40 61 42" stroke="#831843" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                      {isSpeaking ? (
-                        <ellipse cx="50" cy="62" rx="4" ry="3" fill="#9d174d" className="animate-pulse" />
-                      ) : (
-                        <path d="M44 60 Q 50 65 56 60" stroke="#9d174d" strokeWidth="2" strokeLinecap="round" fill="none" />
-                      )}
-                      <path d="M28 50 C 28 30, 72 30, 72 50" stroke="#f472b6" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-                      <rect x="25" y="46" width="6" height="12" rx="3" fill="#ec4899" />
-                      <rect x="69" y="46" width="6" height="12" rx="3" fill="#ec4899" />
-                      <path d="M30 56 Q 36 66 45 65" stroke="#f472b6" strokeWidth="2" strokeLinecap="round" fill="none" />
-                      <circle cx="45" cy="65" r="2.5" fill="#38bdf8" />
+                      <path d="M22 45 C 20 20, 80 20, 78 45 C 82 65, 75 80, 72 88 C 65 78, 70 50, 70 45 C 70 25, 30 25, 30 45 C 30 50, 35 78, 28 88 C 25 80, 18 65, 22 45 Z" fill="#0f172a" />
+                      <ellipse cx="50" cy="52" rx="18" ry="22" fill="#e0f2fe" />
+                      <ellipse cx="43" cy="48" rx="2.5" ry="3.5" fill="#0f172a" />
+                      <ellipse cx="57" cy="48" rx="2.5" ry="3.5" fill="#0f172a" />
                     </svg>
                   </div>
 
                   {isSpeaking && (
-                    <div className="absolute inset-0 bg-pink-900/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 bg-cyan-900/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
                       <div className="flex space-x-1.5 items-end h-8">
                         <span className="w-1.5 bg-white animate-bounce h-4 rounded-full shadow-sm"></span>
                         <span className="w-1.5 bg-white animate-bounce h-8 rounded-full shadow-sm" style={{animationDelay: '0.1s'}}></span>
@@ -719,22 +784,22 @@ export default function App() {
                   )}
 
                   {isPaused && (
-                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] flex items-center justify-center text-white text-xs font-black uppercase tracking-widest border border-pink-500/40">
+                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] flex items-center justify-center text-white text-xs font-black uppercase tracking-widest border border-cyan-500/40">
                       Paused
                     </div>
                   )}
                 </div>
 
-                <p className="text-[10px] font-bold text-pink-500 uppercase tracking-widest text-center">
+                <p className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest text-center">
                   {isPaused ? 'Tap avatar to Resume' : isSpeaking ? 'Tap avatar to Pause' : 'Tap avatar to Speak'}
                 </p>
 
-                {/* Highlighted Hire Me Compact Action Tile */}
+                {/* Hire Me Action Tile */}
                 <div className="w-full flex justify-center py-1">
                   <a
                     href="#contact"
-                    onClick={() => handleAssistantQuery("Tejaswini is actively seeking Full-Time software engineering roles, AI developer positions, and internship opportunities! Please reach out via the contact form.")}
-                    className="max-w-[190px] w-full flex items-center justify-center space-x-1.5 bg-gradient-to-r from-pink-600 via-rose-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] border border-pink-400/40 text-center whitespace-nowrap"
+                    onClick={() => handleAssistantQuery("Tejaswini is actively seeking Full-Time software engineering roles, AI developer positions, and entry-level opportunities! Please reach out via the contact form.")}
+                    className="max-w-[190px] w-full flex items-center justify-center space-x-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-md transition-all hover:scale-[1.02] text-center whitespace-nowrap"
                   >
                     <span className="animate-pulse text-xs">✨</span>
                     <span>Hire Tejaswini</span>
@@ -751,44 +816,44 @@ export default function App() {
                 <p className={`text-[11px] font-semibold ${textMutedClass} uppercase tracking-wider text-center`}>Ask me anything:</p>
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini is a Computer Science engineering student at Aditya University with an 8.64 CGPA, specializing in AI, full-stack, and enterprise solutions.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={() => handleAssistantQuery("Tejaswini is a Computer Science engineering graduate from Aditya University with an 8.64 CGPA, specializing in AI, full-stack, and enterprise solutions.")}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     About
                   </button>
                   <button 
-                    onClick={() => handleAssistantQuery("Tejaswini has interned at Areteans Technology Solutions as a Technology Specialist in PEGA, and at Technical Hub as a Salesforce Software Engineering Intern.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    onClick={() => handleAssistantQuery("Tejaswini has interned at Areteans Technology Solutions as a PEGA Specialist, and at Technical Hub as a Salesforce Software Engineering Intern.")}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Experience
                   </button>
                   <button 
                     onClick={() => handleAssistantQuery("Tejaswini has strong skills in Java, Python, JavaScript, Apex, FastAPI, Flask, React, SQL, and Salesforce Lightning Web Components.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Skills
                   </button>
                   <button 
                     onClick={() => handleAssistantQuery("Tejaswini has built major systems including CXIntel AI CRM, GitNexus multi-agent system, EduBond mobile app, and SpendIQ FinTech tool.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Projects
                   </button>
                   <button 
                     onClick={() => handleAssistantQuery("Tejaswini secured 2nd prize in national paper presentation, ranked in Top 10 at Code Wars 1.0, and qualified in OpenAI hackathons.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Achievements
                   </button>
                   <button 
                     onClick={() => handleAssistantQuery("Tejaswini holds Salesforce Platform Developer I, AgentForce Specialist, Pega CSA, Red Hat RHCSA, and Certiport Python and Java certifications.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Certifications
                   </button>
                   <button 
                     onClick={() => handleAssistantQuery("Tejaswini has completed her B.Tech in Computer Science & Engineering at Aditya University (2022-2026) with an 8.64 CGPA, after scoring 96.7% in Intermediate and 96.66% in 10th standard. She is an entry-level software candidate.")}
-                    className={`text-[11px] ${isDark ? 'bg-pink-950/40 text-pink-300 border-pink-800/50 hover:bg-pink-900/50' : 'bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2 py-1 rounded-lg font-medium transition-colors border`}
                   >
                     Education
                   </button>
@@ -797,73 +862,20 @@ export default function App() {
             </div>
           </div>
 
-          {/* Name & Bio */}
-          <div className="md:col-span-7 flex flex-col items-start justify-center order-1 space-y-6">
-            <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full ${isDark ? 'bg-pink-950/50 border-pink-800/60 text-pink-300' : 'bg-pink-50 border-pink-200 text-pink-700'} border text-xs font-semibold tracking-wide uppercase`}>
-              <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-              <span>Entry-Level Software Engineer &amp; AI Developer</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-              DANDE <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">TEJASWINI</span>
-            </h1>
-
-            <p className={`text-base sm:text-lg ${textMutedClass} max-w-xl font-normal leading-relaxed`}>
-              &ldquo;Software Engineering graduate with hands-on expertise in AI engineering, Python, Java, and Salesforce platforms. Specialized in building intelligent agents, REST APIs, and scalable enterprise solutions.&rdquo;
-            </p>
-
-            <div className="flex flex-wrap gap-3 pt-2">
-              <a
-                href="#projects"
-                className="inline-flex items-center space-x-2 bg-pink-600 hover:bg-pink-500 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md transition-all hover:scale-[1.02]"
-              >
-                <span>Explore My Work</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/tejaswini-dande-826157258/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
-              >
-                <svg className="w-4 h-4 text-blue-500 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                <span>LinkedIn</span>
-              </a>
-
-              <a
-                href="https://github.com/dandetejaswini"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center space-x-2 ${cardGlassClass} text-xs font-medium px-5 py-3 rounded-xl transition-all`}
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                <span>GitHub</span>
-              </a>
-
-              <a
-                href="#contact"
-                className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-md transition-all"
-              >
-                <span>Contact Me</span>
-              </a>
-            </div>
-          </div>
-
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-24 px-6 relative z-10">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Professional Profile</h2>
-            <h3 className="text-3xl font-bold tracking-tight">About Me</h3>
+      <section id="about" className="py-20 px-6 relative z-10">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Professional Profile</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">About Me</h3>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className={`${cardGlassClass} p-8 rounded-3xl space-y-4`}>
-              <h4 className="text-xl font-semibold">Background &amp; Passion</h4>
+              <h4 className="text-xl font-bold">Background &amp; Passion</h4>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
                 I am an entry-level Software Engineer &amp; AI Developer with a strong foundation in Artificial Intelligence, Multi-Agent Systems, and enterprise software engineering. My technical expertise encompasses Python, Java, JavaScript, and Salesforce ecosystems (LWC &amp; AgentForce).
               </p>
@@ -873,22 +885,22 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2`}>
-                <span className="text-3xl font-black text-pink-500">10+</span>
-                <h5 className="text-sm font-semibold">Production Projects</h5>
+              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5`}>
+                <span className="text-3xl font-black text-cyan-500">10+</span>
+                <h5 className="text-sm font-bold">Production Projects</h5>
                 <p className={`text-xs ${textMutedClass}`}>AI, Full-Stack &amp; Salesforce</p>
               </div>
 
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2`}>
+              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5`}>
                 <span className="text-3xl font-black text-indigo-500">7+</span>
-                <h5 className="text-sm font-semibold">Certifications</h5>
+                <h5 className="text-sm font-bold">Certifications</h5>
                 <p className={`text-xs ${textMutedClass}`}>Salesforce, Python, Java</p>
               </div>
 
-              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-2 col-span-2`}>
+              <div className={`${cardGlassClass} p-6 rounded-3xl text-center space-y-1.5 col-span-2`}>
                 <span className="text-2xl font-black text-violet-500">B.Tech CSE (Completed 2026)</span>
-                <h5 className="text-sm font-semibold">Aditya University</h5>
-                <p className={`text-xs ${textMutedClass}`}>CGPA: 8.64 / 10 • Entry-Level Candidate</p>
+                <h5 className="text-sm font-bold">Aditya University</h5>
+                <p className={`text-xs ${textMutedClass}`}>CGPA: 8.64 / 10 • Fresher Candidate</p>
               </div>
             </div>
           </div>
@@ -896,59 +908,59 @@ export default function App() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-24 px-6 relative z-10">
-        <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Technical Proficiency</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Skills & Expertise</h3>
+      <section id="skills" className="py-20 px-6 relative z-10">
+        <div className="max-w-6xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Technical Proficiency</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">Skills &amp; Expertise</h3>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-pink-500/20 text-pink-500 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
               </div>
-              <h4 className="text-lg font-bold">Programming Languages</h4>
+              <h4 className="text-lg font-bold">Languages</h4>
               <div className="flex flex-wrap gap-2">
                 {['Python', 'Java', 'JavaScript', 'TypeScript', 'SQL', 'Apex'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/60 text-slate-200' : 'bg-slate-200/60 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
 
             <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </div>
-              <h4 className="text-lg font-bold">Frameworks & Backend</h4>
+              <h4 className="text-lg font-bold">Frameworks &amp; Web</h4>
               <div className="flex flex-wrap gap-2">
                 {['FastAPI', 'Flask', 'Node.js', 'React', 'React Native', 'LWC', 'REST APIs'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/60 text-slate-200' : 'bg-slate-200/60 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
 
             <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-violet-500/20 text-violet-500 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-violet-500/10 text-violet-500 flex items-center justify-center font-bold">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               </div>
-              <h4 className="text-lg font-bold">AI & ML Tools</h4>
+              <h4 className="text-lg font-bold">AI &amp; Data Tools</h4>
               <div className="flex flex-wrap gap-2">
                 {['LangChain', 'Transformers', 'TensorFlow', 'Scikit-Learn', 'CrewAI', 'LlamaIndex'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/60 text-slate-200' : 'bg-slate-200/60 text-slate-800'}`}>{s}</span>
+                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
 
             <div className={`${cardGlassClass} p-6 rounded-3xl space-y-4`}>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
               </div>
-              <h4 className="text-lg font-bold">Cloud & Tools</h4>
+              <h4 className="text-lg font-bold">Enterprise Platforms</h4>
               <div className="flex flex-wrap gap-2">
-                {['Salesforce CRM', 'Git & GitHub', 'Docker', 'Linux / RHCSA', 'Pega CSA', 'Vercel'].map(s => (
-                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/60 text-slate-200' : 'bg-slate-200/60 text-slate-800'}`}>{s}</span>
+                {['Salesforce', 'AgentForce', 'PEGA', 'Docker', 'Git / GitHub', 'VS Code'].map(s => (
+                  <span key={s} className={`text-xs font-medium px-3 py-1 rounded-lg ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-100 text-slate-800'}`}>{s}</span>
                 ))}
               </div>
             </div>
@@ -957,144 +969,59 @@ export default function App() {
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section id="experience" className="py-24 px-6 relative z-10">
-        <div className="max-w-4xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Career & Internships</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Experience</h3>
+      {/* Projects Showcase Section */}
+      <section id="projects" className="py-20 px-6 relative z-10">
+        <div className="max-w-6xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Portfolio Showcase</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">Featured Projects</h3>
           </div>
 
-          <div className="relative border-l-2 border-pink-500/40 pl-6 space-y-12 ml-4">
-            
-            <div className="relative group">
-              <span className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-pink-500 border-4 border-slate-900 shadow"></span>
-              <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-xl font-bold">Technology Specialist</h4>
-                  <span className="text-xs font-semibold bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">Jan 2025 – Jun 2025</span>
-                </div>
-                <h5 className={`text-sm font-semibold ${textMutedClass}`}>Areteans Technology Solutions Pvt. Ltd. | Hyderabad</h5>
-                <ul className={`${textMutedClass} text-sm sm:text-base leading-relaxed space-y-2 pt-1`}>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Implemented PEGA-based workflow automation, improving process efficiency by 25%.</span></li>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Optimized backend logic and PEGA case flows in collaboration with engineering teams.</span></li>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Contributed to enterprise application development and workflow automation, supporting process-oriented software delivery.</span></li>
-                </ul>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {['PEGA', 'Workflow Automation', 'Enterprise Applications', 'Backend Logic'].map(t => (
-                    <span key={t} className={`text-xs px-2.5 py-1 rounded-md ${isDark ? 'bg-slate-800/60 text-slate-300' : 'bg-slate-200/60 text-slate-800'}`}>{t}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <span className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-indigo-500 border-4 border-slate-900 shadow"></span>
-              <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-xl font-bold">Software Engineering Intern (Salesforce Platform)</h4>
-                  <span className="text-xs font-semibold bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/30">Jun 2024 – Jul 2024</span>
-                </div>
-                <h5 className={`text-sm font-semibold ${textMutedClass}`}>Technical Hub Pvt. Ltd. | Surampalem</h5>
-                <ul className={`${textMutedClass} text-sm sm:text-base leading-relaxed space-y-2 pt-1`}>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Integrated third-party REST APIs into Salesforce using Lightning Web Components (LWC).</span></li>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Developed backend logic in Apex and Python for sentiment-analysis workflows.</span></li>
-                  <li className="flex items-start"><span className="mr-2">•</span><span>Worked across Salesforce application development, API integration, and backend workflow implementation.</span></li>
-                </ul>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {['Salesforce', 'Apex', 'LWC', 'Python', 'REST APIs'].map(t => (
-                    <span key={t} className={`text-xs px-2.5 py-1 rounded-md ${isDark ? 'bg-slate-800/60 text-slate-300' : 'bg-slate-200/60 text-slate-800'}`}>{t}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="py-24 px-6 relative z-10">
-        <div className="max-w-7xl mx-auto space-y-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-3 text-center md:text-left">
-              <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Portfolio</h2>
-              <h3 className="text-3xl font-bold tracking-tight">Projects</h3>
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-2 justify-center">
-              {['All', 'AI', 'Salesforce', 'FinTech', 'Developer Tools'].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setFilterCategory(cat)}
-                  className={`text-xs font-semibold px-4 py-2 rounded-xl transition-all ${filterCategory === cat ? 'bg-pink-600 text-white shadow-md' : `${cardGlassClass} text-xs`}`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            {['All', 'AI', 'Salesforce', 'Mobile', 'Web App', 'Security'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(cat)}
+                className={`text-xs font-semibold px-4 py-2 rounded-xl transition-all ${filterCategory === cat ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20' : isDark ? 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800' : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'}`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
 
+          {/* Projects Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map(project => (
-              <div 
+            {filteredProjects.map((project) => (
+              <div
                 key={project.id}
                 onClick={() => setSelectedProject(project)}
-                className={`${cardGlassClass} rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between cursor-pointer group`}
+                className={`${cardGlassClass} p-6 rounded-3xl flex flex-col justify-between cursor-pointer space-y-4 hover:scale-[1.01] transition-transform`}
               >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">
-                      {project.category}
-                    </span>
-                    <div className="flex items-center space-x-2.5" onClick={(e) => e.stopPropagation()}>
-                      {project.github && (
-                        <a 
-                          href={project.github} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-slate-400 hover:text-pink-500 transition-colors"
-                          title="View GitHub Repository"
-                        >
-                          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        </a>
-                      )}
-                      {project.live && (
-                        <a 
-                          href={project.live} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-slate-400 hover:text-pink-500 transition-colors"
-                          title="View Live Demo"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        </a>
-                      )}
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold text-cyan-500 uppercase tracking-wider">{project.category}</span>
+                    {project.badge && (
+                      <span className="text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/20 truncate max-w-[150px]">
+                        {project.badge}
+                      </span>
+                    )}
                   </div>
-
-                  {project.badge && (
-                    <div className="inline-flex items-center space-x-1.5 text-[11px] font-semibold bg-amber-500/15 text-amber-500 border border-amber-500/30 px-2.5 py-1 rounded-lg w-full">
-                      <span className="text-xs">🏆</span>
-                      <span>{project.badge}</span>
-                    </div>
-                  )}
-
-                  <h4 className="text-xl font-bold group-hover:text-pink-500 transition-colors">{project.title}</h4>
-                  <p className={`${textMutedClass} text-sm leading-relaxed`}>{project.desc}</p>
+                  <h4 className="text-lg font-extrabold tracking-tight">{project.title}</h4>
+                  <p className={`text-xs ${textMutedClass} line-clamp-3 leading-relaxed`}>{project.desc}</p>
                 </div>
 
-                <div className="space-y-4 pt-6">
+                <div className="space-y-3 pt-2">
                   <div className="flex flex-wrap gap-1.5">
-                    {project.tech.map(t => (
-                      <span key={t} className={`text-[11px] px-2.5 py-1 rounded-md font-medium ${isDark ? 'bg-slate-800/60 text-slate-300' : 'bg-slate-200/60 text-slate-800'}`}>{t}</span>
+                    {project.tech.map((t) => (
+                      <span key={t} className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${isDark ? 'bg-slate-800/80 text-slate-300' : 'bg-slate-100 text-slate-700'}`}>{t}</span>
                     ))}
                   </div>
 
-                  <button className={`w-full ${isDark ? 'bg-slate-800/50 hover:bg-pink-600' : 'bg-slate-200/50 hover:bg-pink-600'} hover:text-white text-xs font-semibold py-2.5 rounded-xl transition-all border border-slate-500/20`}>
-                    View Project Details
-                  </button>
+                  <div className="flex items-center justify-between text-xs font-semibold text-cyan-500 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <span>View Architecture &amp; Metrics</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1104,51 +1031,46 @@ export default function App() {
 
       {/* Project Detail Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
-          <div className={`${isDark ? 'bg-slate-900/90 text-white border-slate-700' : 'bg-white/90 text-slate-900 border-slate-200'} rounded-3xl max-w-2xl w-full p-8 shadow-2xl border space-y-6 relative max-h-[90vh] overflow-y-auto`}>
-            <button 
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md">
+          <div className={`relative max-w-2xl w-full ${isDark ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-8 space-y-6 shadow-2xl border max-h-[90vh] overflow-y-auto`}>
+            <button
               onClick={() => setSelectedProject(null)}
-              className={`absolute top-6 right-6 w-8 h-8 rounded-full ${isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'} flex items-center justify-center font-bold`}
+              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white"
             >
-              ✕
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
             <div className="space-y-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-pink-500">{selectedProject.category}</span>
-              <h3 className="text-2xl font-bold">{selectedProject.title}</h3>
-              <p className={`${textMutedClass} text-sm sm:text-base leading-relaxed`}>{selectedProject.details}</p>
+              <span className="text-xs font-bold text-cyan-500 uppercase tracking-widest">{selectedProject.category}</span>
+              <h3 className="text-2xl font-black">{selectedProject.title}</h3>
             </div>
 
-            <div className={`space-y-3 ${isDark ? 'bg-slate-800/40 border-slate-700/60' : 'bg-slate-100/60 border-slate-200'} p-5 rounded-2xl border`}>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-pink-500">Key Highlights & Metrics</h4>
-              <ul className="space-y-2">
-                {selectedProject.metrics.map((m, idx) => (
-                  <li key={idx} className="flex items-center space-x-2 text-sm">
-                    <span className="w-2 h-2 rounded-full bg-pink-500"></span>
-                    <span>{m}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <p className={`text-sm ${textMutedClass} leading-relaxed`}>{selectedProject.details}</p>
 
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-pink-500">Tech Stack</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedProject.tech.map(t => (
-                  <span key={t} className={`text-xs ${isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-200 text-slate-800'} px-3 py-1 rounded-lg font-medium`}>{t}</span>
-                ))}
+            {selectedProject.metrics && (
+              <div className="space-y-3 pt-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-500">Key Highlights &amp; Metrics</h4>
+                <ul className="space-y-2">
+                  {selectedProject.metrics.map((m, idx) => (
+                    <li key={idx} className="flex items-start space-x-2 text-xs font-medium">
+                      <span className="text-cyan-500 font-bold">•</span>
+                      <span className={textMutedClass}>{m}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            )}
 
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-500/20">
+            <div className="pt-4 flex flex-wrap gap-3">
               {selectedProject.github && (
                 <a
                   href={selectedProject.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center space-x-2"
+                  className="inline-flex items-center space-x-2 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-xs font-semibold px-4 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
                 >
-                  <span>GitHub Repository</span>
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                  <span>View Repository</span>
                 </a>
               )}
               {selectedProject.live && (
@@ -1156,8 +1078,9 @@ export default function App() {
                   href={selectedProject.live}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-pink-600 hover:bg-pink-500 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center space-x-2"
+                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:opacity-95 transition-opacity"
                 >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                   <span>Live Demo</span>
                 </a>
               )}
@@ -1166,128 +1089,185 @@ export default function App() {
         </div>
       )}
 
-      {/* Achievements Section */}
-      <section id="achievements" className="py-24 px-6 relative z-10">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Recognitions</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Achievements & Hackathons</h3>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {achievementsData.map((ach, idx) => (
-              <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl space-y-3 transition-all`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">{ach.year}</span>
-                  <span className={`text-xs font-semibold ${textMutedClass}`}>{ach.org}</span>
-                </div>
-                <h4 className="text-lg font-bold">{ach.title}</h4>
-                <p className={`${textMutedClass} text-sm`}>{ach.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications Section */}
-      <section id="certifications" className="py-24 px-6 relative z-10">
+      {/* STREAMLINED SECTION: Career & Education Journey Timeline */}
+      <section id="journey" className="py-20 px-6 relative z-10">
         <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Credentials</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Certifications</h3>
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Experience &amp; Academics</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">Career &amp; Education Journey</h3>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {certificationsData.map((cert, idx) => (
-              <a
-                key={idx}
-                href={cert.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${cardGlassClass} p-6 rounded-3xl transition-all flex flex-col justify-between space-y-4 group`}
-              >
-                <div className="space-y-2">
-                  <span className="text-[11px] font-semibold text-pink-500 uppercase tracking-wider">{cert.issuer}</span>
-                  <h4 className="text-base font-bold group-hover:text-pink-500 transition-colors">{cert.title}</h4>
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Left Column: Work Experience */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+                <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
-                <div className="flex items-center text-xs font-semibold space-x-1 group-hover:translate-x-1 transition-transform">
-                  <span>Verify Credential</span>
-                  <span>→</span>
+                <h4 className="text-xl font-extrabold">Professional Internships</h4>
+              </div>
+
+              <div className="space-y-6">
+                {experienceData.map((exp, idx) => (
+                  <div key={idx} className={`${cardGlassClass} p-7 rounded-3xl space-y-4 relative overflow-hidden`}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <h5 className="text-lg font-bold">{exp.role}</h5>
+                        <p className="text-xs font-semibold text-cyan-500">{exp.company}</p>
+                      </div>
+                      <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">
+                        {exp.period}
+                      </span>
+                    </div>
+
+                    <ul className="space-y-2 pt-1">
+                      {exp.points.map((pt, pIdx) => (
+                        <li key={pIdx} className="flex items-start space-x-2 text-xs font-medium">
+                          <span className="text-cyan-500 font-bold">•</span>
+                          <span className={textMutedClass}>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column: Academic Degrees */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+                <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                 </div>
-              </a>
-            ))}
+                <h4 className="text-xl font-extrabold">Academic Background</h4>
+              </div>
+
+              <div className="space-y-6">
+                <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h5 className="text-base font-bold">B.Tech — Computer Science &amp; Engineering (CSE)</h5>
+                    <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">Completed (2022–2026)</span>
+                  </div>
+                  <p className={`text-xs font-medium ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College) — Surampalem, AP</p>
+                  <div className="pt-2">
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Degree Completed — CGPA: 8.64 / 10</span>
+                  </div>
+                </div>
+
+                <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h5 className="text-base font-bold">Intermediate — MPC</h5>
+                    <span className="text-[11px] font-bold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20">Passed 2022</span>
+                  </div>
+                  <p className={`text-xs font-medium ${textMutedClass}`}>Sri Saraswathi Junior College — Ongole, AP</p>
+                  <div className="pt-2">
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-indigo-300' : 'bg-indigo-50 text-indigo-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.7%</span>
+                  </div>
+                </div>
+
+                <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h5 className="text-base font-bold">10th Standard</h5>
+                    <span className="text-[11px] font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20">Passed 2020</span>
+                  </div>
+                  <p className={`text-xs font-medium ${textMutedClass}`}>Sri Chaitanya EM High School — Singarayakonda, AP</p>
+                  <div className="pt-2">
+                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-violet-300' : 'bg-violet-50 text-violet-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.66%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Education Section */}
-      <section id="education" className="py-24 px-6 relative z-10">
-        <div className="max-w-4xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Academic Background</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Education</h3>
+      {/* STREAMLINED SECTION: Credentials & Recognition (Certifications & Achievements Hub) */}
+      <section id="credentials" className="py-20 px-6 relative z-10">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Qualifications &amp; Honors</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">Credentials &amp; Recognition</h3>
           </div>
 
-          <div className="space-y-6">
-            
-            <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h4 className="text-xl font-bold">B.Tech — Computer Science and Engineering (CSE)</h4>
-                <span className="text-xs font-semibold bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30">Completed (2022 – 2026) • Fresher</span>
-              </div>
-              <h5 className={`text-sm font-semibold ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College)</h5>
-              <p className={`text-xs ${textMutedClass}`}>Location: Surampalem, Andhra Pradesh</p>
-              <div className="pt-2">
-                <span className={`text-sm font-bold ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-200/80 text-slate-800'} px-3 py-1.5 rounded-lg inline-block`}>Degree Completed — CGPA: 8.64 / 10</span>
-              </div>
+          {/* Interactive Hub Tabs */}
+          <div className="flex justify-center">
+            <div className={`p-1.5 rounded-2xl ${isDark ? 'bg-slate-900 border border-slate-800' : 'bg-slate-200/70 border border-slate-300'} inline-flex space-x-2`}>
+              <button
+                onClick={() => setCredentialsTab('certifications')}
+                className={`text-xs font-bold px-6 py-2.5 rounded-xl transition-all ${credentialsTab === 'certifications' ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
+              >
+                Certifications ({certificationsData.length})
+              </button>
+              <button
+                onClick={() => setCredentialsTab('achievements')}
+                className={`text-xs font-bold px-6 py-2.5 rounded-xl transition-all ${credentialsTab === 'achievements' ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
+              >
+                Honors &amp; Achievements ({achievementsData.length})
+              </button>
             </div>
-
-            <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h4 className="text-xl font-bold">Intermediate — MPC (Mathematics, Physics and Chemistry)</h4>
-                <span className="text-xs font-semibold bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/30">Passed: 2022</span>
-              </div>
-              <h5 className={`text-sm font-semibold ${textMutedClass}`}>Sri Saraswathi Junior College</h5>
-              <p className={`text-xs ${textMutedClass}`}>Location: Ongole, Andhra Pradesh</p>
-              <div className="pt-2">
-                <span className={`text-sm font-bold ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-200/80 text-slate-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.7%</span>
-              </div>
-            </div>
-
-            <div className={`${cardGlassClass} p-8 rounded-3xl space-y-3`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h4 className="text-xl font-bold">10th Standard</h4>
-                <span className="text-xs font-semibold bg-violet-500/20 text-violet-400 px-3 py-1 rounded-full border border-violet-500/30">Passed: 2020</span>
-              </div>
-              <h5 className={`text-sm font-semibold ${textMutedClass}`}>Sri Chaitanya EM High School</h5>
-              <p className={`text-xs ${textMutedClass}`}>Location: Singarayakonda, Andhra Pradesh</p>
-              <div className="pt-2">
-                <span className={`text-sm font-bold ${isDark ? 'bg-slate-800/80 text-slate-200' : 'bg-slate-200/80 text-slate-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.66%</span>
-              </div>
-            </div>
-
           </div>
+
+          {/* Certifications Tab View */}
+          {credentialsTab === 'certifications' && (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {certificationsData.map((cert, idx) => (
+                <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl flex items-start justify-between gap-4`}>
+                  <div className="space-y-2">
+                    <h5 className="text-sm font-bold leading-snug">{cert.title}</h5>
+                    <p className={`text-xs ${textMutedClass}`}>{cert.issuer}</p>
+                  </div>
+                  <a
+                    href={cert.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-xl bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500 hover:text-white transition-colors shrink-0"
+                    title="View Verified Credential"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Achievements Tab View */}
+          {credentialsTab === 'achievements' && (
+            <div className="space-y-4">
+              {achievementsData.map((item, idx) => (
+                <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl flex flex-wrap sm:flex-nowrap items-start gap-4`}>
+                  <span className="text-xs font-extrabold bg-cyan-500/10 text-cyan-500 px-3 py-1 rounded-full border border-cyan-500/20 shrink-0">
+                    {item.year}
+                  </span>
+                  <div className="space-y-1">
+                    <h5 className="text-base font-bold">{item.title}</h5>
+                    <p className="text-xs font-semibold text-cyan-500">{item.org}</p>
+                    <p className={`text-xs ${textMutedClass} pt-1`}>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 px-6 relative z-10">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-xs font-bold text-pink-500 uppercase tracking-widest">Get In Touch</h2>
-            <h3 className="text-3xl font-bold tracking-tight">Contact Me</h3>
+      <section id="contact" className="py-20 px-6 relative z-10">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Get In Touch</h2>
+            <h3 className="text-3xl font-extrabold tracking-tight">Contact Me</h3>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <h4 className="text-2xl font-bold">Let&apos;s Build Something Together</h4>
               <p className={`${textMutedClass} leading-relaxed text-sm sm:text-base`}>
-                I am actively seeking Full-Time software engineering opportunities, AI developer roles, and internships. Feel free to reach out via the form or connect through my professional profiles below!
+                I am actively seeking Full-Time software engineering opportunities, AI developer roles, and entry-level engineering positions. Feel free to reach out via the form or connect through my professional profiles below!
               </p>
 
               <div className="space-y-4 pt-2">
                 <div className={`flex items-center space-x-4 ${cardGlassClass} p-4 rounded-2xl`}>
-                  <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                   </div>
                   <div>
@@ -1296,7 +1276,7 @@ export default function App() {
                       href="https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-sm font-semibold hover:text-pink-500"
+                      className="text-sm font-bold hover:text-cyan-500"
                     >
                       dandetejaswini1329@gmail.com
                     </a>
@@ -1304,12 +1284,12 @@ export default function App() {
                 </div>
 
                 <div className={`flex items-center space-x-4 ${cardGlassClass} p-4 rounded-2xl`}>
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                   </div>
                   <div>
                     <h5 className={`text-xs font-semibold ${textMutedClass} uppercase`}>LinkedIn</h5>
-                    <a href="https://www.linkedin.com/in/tejaswini-dande-826157258/" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold hover:text-pink-500">tejaswini-dande</a>
+                    <a href="https://www.linkedin.com/in/tejaswini-dande-826157258/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold hover:text-cyan-500">tejaswini-dande</a>
                   </div>
                 </div>
 
@@ -1319,7 +1299,7 @@ export default function App() {
                   </div>
                   <div>
                     <h5 className={`text-xs font-semibold ${textMutedClass} uppercase`}>GitHub</h5>
-                    <a href="https://github.com/dandetejaswini" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold hover:text-pink-500">dandetejaswini</a>
+                    <a href="https://github.com/dandetejaswini" target="_blank" rel="noopener noreferrer" className="text-sm font-bold hover:text-cyan-500">dandetejaswini</a>
                   </div>
                 </div>
               </div>
@@ -1334,10 +1314,10 @@ export default function App() {
                     value={formData.name}
                     onChange={(e) => { setFormData({...formData, name: e.target.value}); if(formStatus) setFormStatus(null); }}
                     placeholder="Enter your name"
-                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-500 transition-colors`}
+                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors`}
                   />
                   <p className={`text-[11px] ${textMutedClass} mt-1.5 flex items-center gap-1 font-medium`}>
-                    <span className="text-pink-500 font-bold">•</span> Required: Valid name containing only letters (a-z, A-Z) and spaces.
+                    <span className="text-cyan-500 font-bold">•</span> Required: Valid name containing only letters (a-z, A-Z) and spaces.
                   </p>
                   {getNameError() && (
                     <p className="text-xs text-rose-500 mt-1 font-medium flex items-center gap-1">
@@ -1353,10 +1333,10 @@ export default function App() {
                     value={formData.email}
                     onChange={(e) => { setFormData({...formData, email: e.target.value}); if(formStatus) setFormStatus(null); }}
                     placeholder="example@gmail.com"
-                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-500 transition-colors`}
+                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors`}
                   />
                   <p className={`text-[11px] ${textMutedClass} mt-1.5 flex items-center gap-1 font-medium`}>
-                    <span className="text-pink-500 font-bold">•</span> Required: Lowercase letters &amp; numbers only before @gmail.com.
+                    <span className="text-cyan-500 font-bold">•</span> Required: Lowercase letters &amp; numbers only before @gmail.com.
                   </p>
                   {getEmailError() && (
                     <p className="text-xs text-rose-500 mt-1 font-medium flex items-center gap-1">
@@ -1372,10 +1352,10 @@ export default function App() {
                     value={formData.message}
                     onChange={(e) => { setFormData({...formData, message: e.target.value}); if(formStatus) setFormStatus(null); }}
                     placeholder="Write your message here..."
-                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-500 transition-colors resize-none`}
-                  />
+                    className={`w-full ${inputBgClass} rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors`}
+                  ></textarea>
                   <p className={`text-[11px] ${textMutedClass} mt-1.5 flex items-center gap-1 font-medium`}>
-                    <span className="text-pink-500 font-bold">•</span> Required: Minimum 10 characters.
+                    <span className="text-cyan-500 font-bold">•</span> Required: At least 10 characters message.
                   </p>
                   {getMessageError() && (
                     <p className="text-xs text-rose-500 mt-1 font-medium flex items-center gap-1">
@@ -1384,22 +1364,18 @@ export default function App() {
                   )}
                 </div>
 
-                {formStatus && formStatus.type === 'error' && (
-                  <div className="p-3 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                {formStatus && (
+                  <div className={`p-3.5 rounded-xl text-xs font-bold text-center ${formStatus.type === 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}`}>
                     {formStatus.text}
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  disabled={formSubmitting || (formStatus && formStatus.type === 'success')}
-                  className={`w-full font-semibold py-3.5 rounded-xl shadow transition-all text-sm cursor-pointer disabled:opacity-90 ${
-                    formStatus && formStatus.type === 'success' 
-                      ? 'bg-emerald-600 text-white' 
-                      : 'bg-pink-600 hover:bg-pink-500 text-white'
-                  }`}
+                  disabled={formSubmitting}
+                  className="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-cyan-500/20 disabled:opacity-50"
                 >
-                  {formSubmitting ? 'Sending Message...' : formStatus && formStatus.type === 'success' ? 'Message Sent Successfully!' : 'Send Message'}
+                  {formSubmitting ? 'Sending Message...' : 'Send Message'}
                 </button>
               </form>
             </div>
@@ -1408,20 +1384,13 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className={`py-8 ${navGlassClass} text-center text-xs relative z-10`}>
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className={textMutedClass}>© {new Date().getFullYear()} Dande Tejaswini. All rights reserved.</p>
-          <div className="flex space-x-6">
-            <a href="https://github.com/dandetejaswini" target="_blank" rel="noopener noreferrer" className={`${textMutedClass} hover:text-pink-500 transition-colors`}>GitHub</a>
-            <a href="https://www.linkedin.com/in/tejaswini-dande-826157258/" target="_blank" rel="noopener noreferrer" className={`${textMutedClass} hover:text-pink-500 transition-colors`}>LinkedIn</a>
-            <a 
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className={`${textMutedClass} hover:text-pink-500 transition-colors`}
-            >
-              Email
-            </a>
+      <footer className={`py-8 px-6 relative z-10 border-t ${isDark ? 'border-slate-900 bg-slate-950 text-slate-400' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium">
+          <p>© {new Date().getFullYear()} Dande Tejaswini. All rights reserved.</p>
+          <div className="flex items-center space-x-6">
+            <a href="https://github.com/dandetejaswini" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">GitHub</a>
+            <a href="https://www.linkedin.com/in/tejaswini-dande-826157258/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">LinkedIn</a>
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">Email</a>
           </div>
         </div>
       </footer>
