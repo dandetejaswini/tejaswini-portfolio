@@ -24,7 +24,7 @@ export default function App() {
   );
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [activeVideoSrc, setActiveVideoSrc] = useState(null);
+  const [activeVideoSrc, setActiveVideoSrc] = useState(`${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`);
 
   const canvasRef = useRef(null);
   const welcomeCanvasRef = useRef(null);
@@ -127,6 +127,10 @@ export default function App() {
     setActiveVideoSrc(videoUrl);
     setIsSpeaking(true);
     setIsPaused(false);
+    if (videoRef.current) {
+      videoRef.current.src = videoUrl;
+      videoRef.current.play().catch(() => {});
+    }
   };
 
   const handleAssistantClick = () => {
@@ -1053,32 +1057,13 @@ export default function App() {
                     }
                   `}</style>
 
-                  {/* Photo is ALWAYS rendered in background - eliminates solid blue circle loading flash */}
-                  <img 
-                    src={`${import.meta.env.BASE_URL}avatar.jpg`} 
-                    alt="Tejaswini AI Assistant" 
-                    className={`absolute inset-0 w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
-                    style={{
-                      animation: (isSpeaking && !activeVideoSrc) ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
-                      transformOrigin: 'center center'
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      if (e.currentTarget.nextElementSibling) {
-                        e.currentTarget.nextElementSibling.style.display = 'block';
-                      }
-                    }}
-                  />
-
-                  {/* Preloaded Video plays instantly on top when triggered */}
+                  {/* Video avatar stays permanently on screen - photo avatar.jpg is never shown after talking */}
                   <video
                     ref={videoRef}
-                    src={activeVideoSrc || ''}
-                    autoPlay
+                    src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
                     playsInline
                     preload="auto"
-                    className="absolute inset-0 w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden z-10"
-                    style={{ display: activeVideoSrc ? 'block' : 'none' }}
+                    className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
                     onPlay={() => {
                       setIsSpeaking(true);
                       setIsPaused(false);
@@ -1086,7 +1071,7 @@ export default function App() {
                     onEnded={() => {
                       setIsSpeaking(false);
                       setIsPaused(false);
-                      setActiveVideoSrc(null);
+                      // Keep AI Assistant video on screen - do NOT reset to static photo
                       if (onVideoEndRef.current) {
                         const callback = onVideoEndRef.current;
                         onVideoEndRef.current = null;
@@ -1094,7 +1079,6 @@ export default function App() {
                       }
                     }}
                     onError={() => {
-                      setActiveVideoSrc(null);
                       if (onVideoEndRef.current) {
                         const callback = onVideoEndRef.current;
                         onVideoEndRef.current = null;
