@@ -1149,43 +1149,43 @@ export default function App() {
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   <button 
                     onClick={handleNavAbout}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     About
                   </button>
                   <button 
                     onClick={handleNavSkills}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Skills
                   </button>
                   <button 
                     onClick={handleNavProjects}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Projects
                   </button>
                   <button 
                     onClick={handleNavJourney}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Journey
                   </button>
                   <button 
                     onClick={handleNavEducation}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Education
                   </button>
                   <button 
                     onClick={handleNavAchievements}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Achievements
                   </button>
                   <button 
                     onClick={handleNavCredentials}
-                    className={`text-[11px] ${isDark ? 'bg-slate-800/80 text-cyan-300 border-slate-700 hover:bg-slate-800' : 'bg-cyan-50 text-cyan-800 border-cyan-200 hover:bg-cyan-100'} px-2.5 py-1 rounded-lg font-medium transition-colors border`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
                   >
                     Credentials
                   </button>
@@ -1276,10 +1276,10 @@ export default function App() {
                   ].map((role) => (
                     <span 
                       key={role} 
-                      className={`text-xs font-mono font-medium px-3.5 py-1.5 rounded-xl border shadow-xs transition-colors ${
+                      className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${
                         isDark 
-                          ? 'bg-slate-900/80 text-cyan-300 border-slate-800' 
-                          : 'bg-white text-slate-800 border-slate-200/80'
+                          ? 'bg-sky-950/50 text-sky-300 border-sky-800/50' 
+                          : 'bg-sky-50 text-sky-700 border-sky-200/80'
                       }`}
                     >
                       {role}
