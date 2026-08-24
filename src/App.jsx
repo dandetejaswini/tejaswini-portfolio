@@ -228,6 +228,17 @@ export default function App() {
     }, 100);
   };
 
+  const handleEmailClick = (e) => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      e.preventDefault();
+      window.location.href = "mailto:dandetejaswini1329@gmail.com";
+    } else {
+      e.preventDefault();
+      window.open("https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com", "_blank");
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -1788,9 +1799,8 @@ export default function App() {
                   <div>
                     <h5 className={`text-xs font-semibold ${textMutedClass} uppercase`}>Email</h5>
                     <a 
-                      href="https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                      href="mailto:dandetejaswini1329@gmail.com" 
+                      onClick={handleEmailClick} 
                       className="text-sm font-bold hover:text-cyan-500"
                     >
                       dandetejaswini1329@gmail.com
@@ -1917,7 +1927,7 @@ export default function App() {
           <div className="flex items-center space-x-6">
             <a href="https://github.com/dandetejaswini" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">GitHub</a>
             <a href="https://www.linkedin.com/in/tejaswini-dande-826157258/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">LinkedIn</a>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=dandetejaswini1329@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-500 transition-colors">Email</a>
+            <a href="mailto:dandetejaswini1329@gmail.com" onClick={handleEmailClick} className="hover:text-cyan-500 transition-colors">Email</a>
           </div>
         </div>
       </footer>
