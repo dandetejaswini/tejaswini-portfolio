@@ -239,13 +239,30 @@ export default function App() {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    // Store trail points for the glowing light drag effect
     const trail = [];
-    const MAX_TRAIL = 50;
+    const sparks = [];
+    const MAX_TRAIL = 120;
+    let hasUserMoved = false;
 
     const addPoint = (x, y) => {
-      trail.push({ x, y, time: Date.now() });
+      hasUserMoved = true;
+      const now = Date.now();
+      trail.push({ x, y, time: now });
       if (trail.length > MAX_TRAIL) trail.shift();
+
+      // Add bright twinkling light sparks on movement
+      for (let i = 0; i < 2; i++) {
+        sparks.push({
+          x: x + (Math.random() - 0.5) * 12,
+          y: y + (Math.random() - 0.5) * 12,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          radius: Math.random() * 3 + 2,
+          color: Math.random() > 0.3 ? '#06b6d4' : '#6366f1',
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
     };
 
     const handleMouseMove = (e) => {
@@ -261,65 +278,142 @@ export default function App() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
+    // Idle auto-drawing path generator if user hasn't moved yet
+    const autoPath = [];
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const now = Date.now();
 
-      // Remove old trail points (fade after 800ms)
-      while (trail.length > 0 && now - trail[0].time > 800) {
+      // If user hasn't moved cursor yet, generate an automated flowing neon light wave!
+      if (!hasUserMoved) {
+        const time = now * 0.0015;
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const rx = Math.min(canvas.width, canvas.height) * 0.35;
+        const ry = Math.min(canvas.width, canvas.height) * 0.2;
+        const autoX = cx + Math.sin(time) * rx * Math.cos(time * 0.5);
+        const autoY = cy + Math.cos(time * 0.8) * ry;
+
+        autoPath.push({ x: autoX, y: autoY, time: now });
+        if (autoPath.length > 60) autoPath.shift();
+
+        // Render automated glowing light trail
+        if (autoPath.length > 1) {
+          for (let i = 1; i < autoPath.length; i++) {
+            const p1 = autoPath[i - 1];
+            const p2 = autoPath[i];
+            const age = now - p2.time;
+            const alpha = Math.max(0, 1 - age / 1800);
+            const width = (i / autoPath.length) * 6;
+
+            ctx.save();
+            ctx.globalAlpha = alpha * 0.85;
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.shadowBlur = 16;
+            ctx.shadowColor = '#06b6d4';
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+
+            // Inner white glow line
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = Math.max(1, width * 0.3);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+
+      // Filter old trail points (2.5 seconds fade for long rich trail!)
+      while (trail.length > 0 && now - trail[0].time > 2500) {
         trail.shift();
       }
 
+      // Render User Light Dragging Line Trail
       if (trail.length > 1) {
-        // Draw connected glowing blue light trail
         for (let i = 1; i < trail.length; i++) {
           const prev = trail[i - 1];
           const curr = trail[i];
           const age = now - curr.time;
-          const alpha = Math.max(0, 1 - age / 800);
-          const lineWidth = Math.max(1, (1 - age / 800) * 6);
+          const progress = i / trail.length;
+          const alpha = Math.max(0, (1 - age / 2500) * progress);
+          const lineWidth = Math.max(1.5, progress * 8);
 
           ctx.save();
           ctx.globalAlpha = alpha;
+          
+          // Outer Neon Cyan Glow
           ctx.strokeStyle = '#06b6d4';
           ctx.lineWidth = lineWidth;
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
-          ctx.shadowBlur = 18;
-          ctx.shadowColor = '#06b6d4';
+          ctx.shadowBlur = 20;
+          ctx.shadowColor = '#00f0ff';
           ctx.beginPath();
           ctx.moveTo(prev.x, prev.y);
           ctx.lineTo(curr.x, curr.y);
           ctx.stroke();
+
+          // Core Pure Light Line
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = Math.max(1, lineWidth * 0.35);
+          ctx.stroke();
           ctx.restore();
         }
 
-        // Bright glowing dot at cursor tip
-        const tip = trail[trail.length - 1];
-        const tipAge = now - tip.time;
-        if (tipAge < 200) {
+        // Glowing Blue Light Head / Cursor Brush Tip
+        const head = trail[trail.length - 1];
+        const headAge = now - head.time;
+        if (headAge < 300) {
           ctx.save();
-          ctx.globalAlpha = Math.max(0, 1 - tipAge / 200);
-          
-          // Outer glow
-          const gradient = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 22);
-          gradient.addColorStop(0, 'rgba(6, 182, 212, 0.7)');
-          gradient.addColorStop(0.4, 'rgba(99, 102, 241, 0.3)');
-          gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
-          ctx.fillStyle = gradient;
+          ctx.globalAlpha = Math.max(0, 1 - headAge / 300);
+
+          // Radial Cyan/Indigo Aura
+          const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 25);
+          grad.addColorStop(0, 'rgba(6, 182, 212, 0.9)');
+          grad.addColorStop(0.5, 'rgba(99, 102, 241, 0.4)');
+          grad.addColorStop(1, 'rgba(139, 92, 246, 0)');
+          ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.arc(tip.x, tip.y, 22, 0, Math.PI * 2);
+          ctx.arc(head.x, head.y, 25, 0, Math.PI * 2);
           ctx.fill();
 
-          // Bright white-blue center
+          // Bright Core Point
           ctx.beginPath();
-          ctx.arc(tip.x, tip.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#e0f7ff';
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = '#06b6d4';
+          ctx.arc(head.x, head.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = '#00f0ff';
           ctx.fill();
           ctx.restore();
         }
+      }
+
+      // Render & Update Twinkling Light Sparks
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.alpha -= s.decay;
+
+        if (s.alpha <= 0) {
+          sparks.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = s.alpha;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fillStyle = s.color;
+        ctx.shadowBlur = s.radius * 3;
+        ctx.shadowColor = s.color;
+        ctx.fill();
+        ctx.restore();
       }
 
       animationFrameId = requestAnimationFrame(animate);
