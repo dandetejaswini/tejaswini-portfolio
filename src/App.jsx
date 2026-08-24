@@ -41,22 +41,25 @@ export default function App() {
       cancelReturnTimer();
     };
 
-    const handleScrollCloseMenu = () => {
+    const handleScrollDismissAll = () => {
       if (mobileMenuOpen) {
         setMobileMenuOpen(false);
       }
+      if (selectedProject) {
+        setSelectedProject(null);
+      }
     };
 
-    window.addEventListener('wheel', handleUserInteraction, { passive: true });
-    window.addEventListener('touchmove', handleUserInteraction, { passive: true });
-    window.addEventListener('scroll', handleScrollCloseMenu, { passive: true });
+    window.addEventListener('wheel', (e) => { handleUserInteraction(); handleScrollDismissAll(); }, { passive: true });
+    window.addEventListener('touchmove', (e) => { handleUserInteraction(); handleScrollDismissAll(); }, { passive: true });
+    window.addEventListener('scroll', handleScrollDismissAll, { passive: true });
 
     return () => {
-      window.removeEventListener('wheel', handleUserInteraction);
-      window.removeEventListener('touchmove', handleUserInteraction);
-      window.removeEventListener('scroll', handleScrollCloseMenu);
+      window.removeEventListener('wheel', handleScrollDismissAll);
+      window.removeEventListener('touchmove', handleScrollDismissAll);
+      window.removeEventListener('scroll', handleScrollDismissAll);
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, selectedProject]);
 
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
@@ -857,16 +860,39 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Avatar Display Frame with 3D Lip-Sync Soundwave */}
+                {/* 3D Talking Avatar Display Frame with Live Lip-Sync */}
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-transform duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
+                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
+                  style={{
+                    perspective: '600px'
+                  }}
                 >
+                  <style>{`
+                    @keyframes talkingHead3D {
+                      0%, 100% { transform: scale(1.1) rotate(0deg) translateY(0px) rotateY(0deg); }
+                      25% { transform: scale(1.13) rotate(2deg) translateY(-3px) rotateY(-4deg); }
+                      50% { transform: scale(1.11) rotate(-2deg) translateY(1px) rotateY(4deg); }
+                      75% { transform: scale(1.14) rotate(1.5deg) translateY(-2px) rotateY(-2deg); }
+                    }
+                    @keyframes lipSyncTalkingMouth {
+                      0%, 100% { transform: scaleY(0.2) scaleX(0.85); opacity: 0.6; }
+                      20% { transform: scaleY(1.5) scaleX(1.15); opacity: 0.95; }
+                      40% { transform: scaleY(0.4) scaleX(0.8); opacity: 0.7; }
+                      60% { transform: scaleY(1.7) scaleX(1.2); opacity: 1; }
+                      80% { transform: scaleY(0.6) scaleX(0.9); opacity: 0.8; }
+                    }
+                  `}</style>
+
                   <img 
                     src={`${import.meta.env.BASE_URL}avatar.jpg`} 
                     alt="Tejaswini AI Assistant" 
                     className={`w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
+                    style={{
+                      animation: isSpeaking ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
+                      transformOrigin: 'center center'
+                    }}
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       if (e.currentTarget.nextElementSibling) {
@@ -891,24 +917,19 @@ export default function App() {
                     </svg>
                   </div>
 
-                  {/* Dynamic 3D Talking Lip-Sync Equalizer Soundwave Overlay */}
+                  {/* Live Lip-Sync Mouth Articulation on Photo (No forehead/face soundbars) */}
                   {isSpeaking && (
-                    <div className="absolute inset-0 bg-cyan-950/20 backdrop-blur-[1px] flex flex-col items-center justify-between p-2.5 pointer-events-none">
-                      <div className="w-full flex justify-center space-x-1 pt-1">
-                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full shadow-sm"></span>
-                        <span className="w-1 bg-indigo-400 animate-bounce h-5 rounded-full shadow-sm" style={{animationDelay: '0.1s'}}></span>
-                        <span className="w-1 bg-cyan-400 animate-bounce h-4 rounded-full shadow-sm" style={{animationDelay: '0.2s'}}></span>
-                      </div>
-                      
-                      {/* Active Lip-Sync Soundwave Pulsing Indicator */}
-                      <div className="flex items-center space-x-1 mb-5 bg-slate-950/85 px-3 py-1 rounded-full border border-cyan-400/60 shadow-lg animate-pulse">
-                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full" style={{animationDelay: '0.05s'}}></span>
-                        <span className="w-1 bg-cyan-300 animate-bounce h-4 rounded-full" style={{animationDelay: '0.15s'}}></span>
-                        <span className="w-1.5 bg-cyan-400 animate-bounce h-5.5 rounded-full" style={{animationDelay: '0.25s'}}></span>
-                        <span className="w-1 bg-cyan-300 animate-bounce h-4 rounded-full" style={{animationDelay: '0.35s'}}></span>
-                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full" style={{animationDelay: '0.45s'}}></span>
-                      </div>
-                    </div>
+                    <div 
+                      className="absolute pointer-events-none rounded-full bg-rose-950/70 border border-rose-400/50 shadow-inner"
+                      style={{
+                        bottom: '29%',
+                        left: '43%',
+                        width: '14%',
+                        height: '8%',
+                        animation: 'lipSyncTalkingMouth 0.3s ease-in-out infinite alternate',
+                        boxShadow: '0 0 6px rgba(244, 63, 94, 0.6)'
+                      }}
+                    />
                   )}
 
                   {isPaused && (
