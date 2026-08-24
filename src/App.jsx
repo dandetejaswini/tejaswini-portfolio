@@ -1149,43 +1149,43 @@ export default function App() {
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   <button 
                     onClick={handleNavAbout}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     About
                   </button>
                   <button 
                     onClick={handleNavSkills}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Skills
                   </button>
                   <button 
                     onClick={handleNavProjects}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Projects
                   </button>
                   <button 
                     onClick={handleNavJourney}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Journey
                   </button>
                   <button 
                     onClick={handleNavEducation}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Education
                   </button>
                   <button 
                     onClick={handleNavAchievements}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Achievements
                   </button>
                   <button 
                     onClick={handleNavCredentials}
-                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${isDark ? 'bg-sky-950/50 text-sky-300 border-sky-800/50 hover:bg-sky-900/60' : 'bg-sky-50 text-sky-700 border-sky-200/80 hover:bg-sky-100/80'}`}
+                    className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80 hover:bg-cyan-900/60' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300 hover:bg-cyan-100/90'}`}
                   >
                     Credentials
                   </button>
@@ -1276,10 +1276,10 @@ export default function App() {
                   ].map((role) => (
                     <span 
                       key={role} 
-                      className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-colors ${
+                      className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${
                         isDark 
-                          ? 'bg-sky-950/50 text-sky-300 border-sky-800/50' 
-                          : 'bg-sky-50 text-sky-700 border-sky-200/80'
+                          ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' 
+                          : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
                       }`}
                     >
                       {role}
@@ -1352,8 +1352,8 @@ export default function App() {
                   {cat.items.map((item) => (
                     <span 
                       key={item} 
-                      className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
-                        isDark ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' : 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                      className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${
+                        isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
                       }`}
                     >
                       {item}
@@ -1399,7 +1399,9 @@ export default function App() {
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-[11px] font-bold text-cyan-500 uppercase tracking-wider">{project.category}</span>
                     {project.badge && (
-                      <span className="text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/20 whitespace-normal">
+                      <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border whitespace-normal ${
+                        isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                      }`}>
                         {project.badge}
                       </span>
                     )}
@@ -1419,10 +1421,10 @@ export default function App() {
                     {project.tech.map((t) => (
                       <span 
                         key={t} 
-                        className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
+                        className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${
                           isDark 
-                            ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' 
-                            : 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                            ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' 
+                            : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
                         }`}
                       >
                         {t}
@@ -1580,7 +1582,9 @@ export default function App() {
                         <h5 className="text-lg font-bold">{exp.role}</h5>
                         <p className="text-xs font-semibold text-cyan-500">{exp.company}</p>
                       </div>
-                      <span className="text-[11px] font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">
+                      <span className={`text-[11px] font-medium px-3 py-1 rounded-full border self-start sm:self-auto ${
+                        isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                      }`}>
                         {exp.period}
                       </span>
                     </div>
@@ -1611,33 +1615,45 @@ export default function App() {
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">B.Tech — Computer Science &amp; Engineering (CSE)</h5>
-                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2022 – 2026</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border self-start sm:self-auto ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>2022 – 2026</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Aditya University (Formerly Aditya Engineering College) — Surampalem, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>CGPA: 8.64 / 10</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border inline-block ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>CGPA: 8.64 / 10</span>
                   </div>
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">Intermediate — MPC</h5>
-                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2020 – 2022</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border self-start sm:self-auto ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>2020 – 2022</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Saraswathi Junior College — Ongole, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.7%</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border inline-block ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>Score: 96.7%</span>
                   </div>
                 </div>
 
                 <div className={`${cardGlassClass} p-7 rounded-3xl space-y-3`}>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h5 className="text-base font-bold">10th Standard</h5>
-                    <span className="text-xs font-bold bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20 self-start sm:self-auto">2020</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border self-start sm:self-auto ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>2020</span>
                   </div>
                   <p className={`text-xs font-medium ${textMutedClass}`}>Sri Chaitanya EM High School — Singarayakonda, AP</p>
                   <div className="pt-2">
-                    <span className={`text-xs font-bold ${isDark ? 'bg-slate-800/80 text-cyan-300' : 'bg-cyan-50 text-cyan-800'} px-3 py-1.5 rounded-lg inline-block`}>Score: 96.66%</span>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full border inline-block ${
+                      isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                    }`}>Score: 96.66%</span>
                   </div>
                 </div>
               </div>
@@ -1700,7 +1716,9 @@ export default function App() {
             <div className="space-y-4">
               {achievementsData.map((item, idx) => (
                 <div key={idx} className={`${cardGlassClass} p-6 rounded-3xl flex flex-wrap sm:flex-nowrap items-start gap-4`}>
-                  <span className="text-xs font-extrabold bg-cyan-500/10 text-cyan-500 px-3 py-1 rounded-full border border-cyan-500/20 shrink-0">
+                  <span className={`text-xs font-medium px-3 py-1 rounded-full border shrink-0 ${
+                    isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
+                  }`}>
                     {item.year}
                   </span>
                   <div className="space-y-1">
@@ -1745,8 +1763,8 @@ export default function App() {
                       'Automation',
                       'Technology-focused roles'
                     ].map((area) => (
-                      <span key={area} className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
-                        isDark ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' : 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                      <span key={area} className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${
+                        isDark ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/80' : 'bg-cyan-50/90 text-cyan-900 border-cyan-300'
                       }`}>
                         {area}
                       </span>
