@@ -456,7 +456,7 @@ export default function App() {
       subtitle: 'Real-time AI content shield',
       category: 'AI / Security',
       featured: true,
-      badge: 'OpenAI Academy & NextWave State-Level Buildathon',
+      badge: 'Qualified: OpenAI Academy & NextWave Buildathon',
       github: 'https://github.com/dandetejaswini/Net-Gaurdian',
       desc: 'Browser extension that detects and blurs harmful content in real time using privacy-preserving on-device inference.',
       tech: ['TensorFlow.js', 'Flask', 'LangChain', 'Browser Extension', 'Privacy-First'],
@@ -849,16 +849,16 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Avatar Display Frame */}
+                {/* Avatar Display Frame with 3D Lip-Sync Soundwave */}
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/30 scale-105' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
+                  className={`relative w-36 h-36 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-transform duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
                 >
                   <img 
                     src={`${import.meta.env.BASE_URL}avatar.jpg`} 
                     alt="Tejaswini AI Assistant" 
-                    className="w-full h-full object-cover rounded-full transition-transform duration-500 group-hover/avatar:scale-110"
+                    className={`w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       if (e.currentTarget.nextElementSibling) {
@@ -883,13 +883,22 @@ export default function App() {
                     </svg>
                   </div>
 
+                  {/* Dynamic 3D Talking Lip-Sync Equalizer Soundwave Overlay */}
                   {isSpeaking && (
-                    <div className="absolute inset-0 bg-cyan-900/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
-                      <div className="flex space-x-1.5 items-end h-8">
-                        <span className="w-1.5 bg-white animate-bounce h-4 rounded-full shadow-sm"></span>
-                        <span className="w-1.5 bg-white animate-bounce h-8 rounded-full shadow-sm" style={{animationDelay: '0.1s'}}></span>
-                        <span className="w-1.5 bg-white animate-bounce h-5 rounded-full shadow-sm" style={{animationDelay: '0.2s'}}></span>
-                        <span className="w-1.5 bg-white animate-bounce h-7 rounded-full shadow-sm" style={{animationDelay: '0.3s'}}></span>
+                    <div className="absolute inset-0 bg-cyan-950/20 backdrop-blur-[1px] flex flex-col items-center justify-between p-2.5 pointer-events-none">
+                      <div className="w-full flex justify-center space-x-1 pt-1">
+                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full shadow-sm"></span>
+                        <span className="w-1 bg-indigo-400 animate-bounce h-5 rounded-full shadow-sm" style={{animationDelay: '0.1s'}}></span>
+                        <span className="w-1 bg-cyan-400 animate-bounce h-4 rounded-full shadow-sm" style={{animationDelay: '0.2s'}}></span>
+                      </div>
+                      
+                      {/* Active Lip-Sync Soundwave Pulsing Indicator */}
+                      <div className="flex items-center space-x-1 mb-5 bg-slate-950/85 px-3 py-1 rounded-full border border-cyan-400/60 shadow-lg animate-pulse">
+                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full" style={{animationDelay: '0.05s'}}></span>
+                        <span className="w-1 bg-cyan-300 animate-bounce h-4 rounded-full" style={{animationDelay: '0.15s'}}></span>
+                        <span className="w-1.5 bg-cyan-400 animate-bounce h-5.5 rounded-full" style={{animationDelay: '0.25s'}}></span>
+                        <span className="w-1 bg-cyan-300 animate-bounce h-4 rounded-full" style={{animationDelay: '0.35s'}}></span>
+                        <span className="w-1 bg-cyan-400 animate-bounce h-3 rounded-full" style={{animationDelay: '0.45s'}}></span>
                       </div>
                     </div>
                   )}
@@ -1065,7 +1074,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Metrics & Impact Cards */}
+            {/* Expanded 6-Card Metrics Grid */}
             <div className="grid grid-cols-2 gap-4">
               <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
                 <span className="text-3xl font-black text-cyan-500">10+</span>
@@ -1079,13 +1088,28 @@ export default function App() {
                 <p className={`text-xs ${textMutedClass}`}>GenAI, Agentic AI, RAG, NLP, ML, and AI automation</p>
               </div>
 
-              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2 col-span-2`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-black text-violet-500">7+</span>
-                  <span className="text-xs font-bold bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full border border-violet-500/20">Verified Badges</span>
-                </div>
-                <h5 className="text-sm font-bold">Certifications &amp; Credentials</h5>
-                <p className={`text-xs ${textMutedClass}`}>Salesforce Platform Dev I, Agentforce, Pega CSA, Red Hat RHCSA, Python &amp; Java</p>
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
+                <span className="text-3xl font-black text-violet-500">7+</span>
+                <h5 className="text-sm font-bold">Certifications</h5>
+                <p className={`text-xs ${textMutedClass}`}>Salesforce Platform Dev I, Agentforce, Pega CSA, RHCSA, Python &amp; Java</p>
+              </div>
+
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
+                <span className="text-3xl font-black text-sky-500">8.64</span>
+                <h5 className="text-sm font-bold">B.Tech CGPA</h5>
+                <p className={`text-xs ${textMutedClass}`}>Computer Science &amp; Engineering Academic Distinction at Aditya University</p>
+              </div>
+
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
+                <span className="text-3xl font-black text-teal-500">25%</span>
+                <h5 className="text-sm font-bold">Efficiency Boost</h5>
+                <p className={`text-xs ${textMutedClass}`}>Process optimization &amp; workflow automation in PEGA/Salesforce</p>
+              </div>
+
+              <div className={`${cardGlassClass} p-6 rounded-3xl space-y-2`}>
+                <span className="text-3xl font-black text-emerald-500">95%+</span>
+                <h5 className="text-sm font-bold">System Accuracy</h5>
+                <p className={`text-xs ${textMutedClass}`}>Barcode scanning precision &amp; ML transaction anomaly detection</p>
               </div>
             </div>
           </div>
