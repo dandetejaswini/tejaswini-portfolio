@@ -850,7 +850,7 @@ export default function App() {
                 Tejaswini&apos;s AI Assistant
               </div>
               
-              <div className={`w-[260px] min-h-[340px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-slate-200'} rounded-2xl overflow-hidden flex flex-col items-center justify-between p-5 border relative shadow-inner gap-3`}>
+              <div className={`w-full max-w-[310px] sm:max-w-[340px] min-h-[380px] ${isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-100/80 border-slate-200'} rounded-3xl overflow-hidden flex flex-col items-center justify-between p-4 sm:p-6 border relative shadow-inner gap-4`}>
                 
                 {/* AI Status Badge */}
                 <div className="w-full flex items-center justify-between px-1">
@@ -873,7 +873,7 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-52 h-52 sm:w-60 sm:h-60 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-2xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0`}
+                  className={`relative w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-8 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
                   style={{
                     perspective: '600px'
                   }}
