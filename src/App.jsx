@@ -207,13 +207,13 @@ export default function App() {
   };
 
   const handleNavHire = () => {
+    const contactEl = document.getElementById('contact');
+    if (contactEl) {
+      contactEl.scrollIntoView({ behavior: 'smooth' });
+    }
     playAssistantVideo(
       'hire.mp4',
-      "Interested in working with Tejaswini? She is open to opportunities in Software Engineering, AI and Machine Learning, Backend Development, Full Stack Development, Salesforce, PEGA, Automation, and other technology-focused roles. Let's connect.",
-      () => {
-        // Direct jump to contact form AFTER hire video finishes talking!
-        jumpToSection('contact');
-      }
+      "Interested in working with Tejaswini? She is open to opportunities in Software Engineering, AI and Machine Learning, Backend Development, Full Stack Development, Salesforce, PEGA, Automation, and other technology-focused roles. Let's connect."
     );
   };
 
