@@ -209,7 +209,9 @@ export default function App() {
   const handleNavHire = () => {
     const contactEl = document.getElementById('contact');
     if (contactEl) {
-      contactEl.scrollIntoView({ behavior: 'smooth' });
+      contactEl.scrollIntoView({ behavior: 'auto' });
+    } else {
+      window.location.hash = '#contact';
     }
     playAssistantVideo(
       'hire.mp4',
@@ -221,7 +223,9 @@ export default function App() {
     setShowWelcome(false);
     setLoading(false);
     const greetingText = "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!";
-    playAssistantVideo('greeting.mp4', greetingText);
+    setTimeout(() => {
+      playAssistantVideo('greeting.mp4', greetingText);
+    }, 100);
   };
 
   useEffect(() => {
