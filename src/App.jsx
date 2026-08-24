@@ -24,7 +24,7 @@ export default function App() {
   );
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [activeVideoSrc, setActiveVideoSrc] = useState(`${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`);
+  const [activeVideoSrc, setActiveVideoSrc] = useState(null);
 
   const canvasRef = useRef(null);
   const welcomeCanvasRef = useRef(null);
@@ -1059,10 +1059,11 @@ export default function App() {
                     }
                   `}</style>
 
-                  {/* Permanent Video element - never unmounts, transitions seamlessly */}
+                  {/* Permanent Video element - plays automatically on every section click */}
                   <video
                     ref={videoRef}
                     src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
+                    autoPlay
                     playsInline
                     preload="auto"
                     className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
