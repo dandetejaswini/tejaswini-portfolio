@@ -225,6 +225,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Preload all AI Avatar video clips into browser cache for instant 0ms playback
+  useEffect(() => {
+    const videoFiles = [
+      'greeting.mp4', 'about.mp4', 'skills.mp4', 'projects.mp4',
+      'journey.mp4', 'education.mp4', 'achievements.mp4',
+      'credentials.mp4', 'hire.mp4', 'contact_success.mp4'
+    ];
+    videoFiles.forEach(file => {
+      const v = document.createElement('video');
+      v.src = `${import.meta.env.BASE_URL}avatar_videos/${file}`;
+      v.preload = 'auto';
+    });
+  }, []);
+
   // Welcome canvas animation - subtle glassmorphic cursor trail only
   useEffect(() => {
     if (!welcomeCanvasRef.current) return;
@@ -1018,7 +1032,7 @@ export default function App() {
                 <div 
                   onClick={handleAssistantClick}
                   title={isPaused ? "Tap to Resume Speech" : isSpeaking ? "Tap to Pause Speech" : "Tap to Hear Assistant"}
-                  className={`relative w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-gradient-to-tr from-cyan-600 via-indigo-600 to-violet-600 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
+                  className={`relative w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full overflow-hidden border-4 cursor-pointer flex items-center justify-center bg-slate-900 shadow-xl ${isSpeaking ? 'border-cyan-400 ring-4 ring-cyan-500/25 scale-105 transition-all duration-300' : 'border-cyan-300/80 hover:border-cyan-500'} transition-all duration-300 group/avatar shrink-0 my-auto`}
                   style={{
                     perspective: '600px'
                   }}
@@ -1039,53 +1053,55 @@ export default function App() {
                     }
                   `}</style>
 
-                  {activeVideoSrc ? (
-                    <video
-                      ref={videoRef}
-                      src={activeVideoSrc}
-                      autoPlay
-                      playsInline
-                      className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
-                      onPlay={() => {
-                        setIsSpeaking(true);
-                        setIsPaused(false);
-                      }}
-                      onEnded={() => {
-                        setIsSpeaking(false);
-                        setIsPaused(false);
-                        setActiveVideoSrc(null);
-                        if (onVideoEndRef.current) {
-                          const callback = onVideoEndRef.current;
-                          onVideoEndRef.current = null;
-                          callback();
-                        }
-                      }}
-                      onError={() => {
-                        setActiveVideoSrc(null);
-                        if (onVideoEndRef.current) {
-                          const callback = onVideoEndRef.current;
-                          onVideoEndRef.current = null;
-                          callback();
-                        }
-                      }}
-                    />
-                  ) : (
-                    <img 
-                      src={`${import.meta.env.BASE_URL}avatar.jpg`} 
-                      alt="Tejaswini AI Assistant" 
-                      className={`w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
-                      style={{
-                        animation: isSpeaking ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
-                        transformOrigin: 'center center'
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        if (e.currentTarget.nextElementSibling) {
-                          e.currentTarget.nextElementSibling.style.display = 'block';
-                        }
-                      }}
-                    />
-                  )}
+                  {/* Photo is ALWAYS rendered in background - eliminates solid blue circle loading flash */}
+                  <img 
+                    src={`${import.meta.env.BASE_URL}avatar.jpg`} 
+                    alt="Tejaswini AI Assistant" 
+                    className={`absolute inset-0 w-full h-full object-cover rounded-full transition-transform duration-500 ${isSpeaking ? 'scale-110' : 'group-hover/avatar:scale-110'}`}
+                    style={{
+                      animation: (isSpeaking && !activeVideoSrc) ? 'talkingHead3D 2.5s ease-in-out infinite' : 'none',
+                      transformOrigin: 'center center'
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      if (e.currentTarget.nextElementSibling) {
+                        e.currentTarget.nextElementSibling.style.display = 'block';
+                      }
+                    }}
+                  />
+
+                  {/* Preloaded Video plays instantly on top when triggered */}
+                  <video
+                    ref={videoRef}
+                    src={activeVideoSrc || ''}
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    className="absolute inset-0 w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden z-10"
+                    style={{ display: activeVideoSrc ? 'block' : 'none' }}
+                    onPlay={() => {
+                      setIsSpeaking(true);
+                      setIsPaused(false);
+                    }}
+                    onEnded={() => {
+                      setIsSpeaking(false);
+                      setIsPaused(false);
+                      setActiveVideoSrc(null);
+                      if (onVideoEndRef.current) {
+                        const callback = onVideoEndRef.current;
+                        onVideoEndRef.current = null;
+                        callback();
+                      }
+                    }}
+                    onError={() => {
+                      setActiveVideoSrc(null);
+                      if (onVideoEndRef.current) {
+                        const callback = onVideoEndRef.current;
+                        onVideoEndRef.current = null;
+                        callback();
+                      }
+                    }}
+                  />
 
                   {/* Fallback Vector */}
                   <div className="hidden w-full h-full relative">
