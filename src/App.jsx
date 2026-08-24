@@ -22,9 +22,9 @@ export default function App() {
   const [assistantMessage, setAssistantMessage] = useState(
     "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!"
   );
-  const [isSpeaking, setIsSpeaking] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [activeVideoSrc, setActiveVideoSrc] = useState(`${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`);
+  const [activeVideoSrc, setActiveVideoSrc] = useState(null);
 
   const canvasRef = useRef(null);
   const speechRef = useRef(null);
@@ -218,10 +218,10 @@ export default function App() {
   };
 
   useEffect(() => {
-    setLoading(false);
-    setShowWelcome(false);
-    const greetingText = "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!";
-    playAssistantVideo('greeting.mp4', greetingText);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -899,7 +899,6 @@ export default function App() {
                       ref={videoRef}
                       src={activeVideoSrc}
                       autoPlay
-                      preload="auto"
                       playsInline
                       className="w-full h-full object-cover scale-[1.3] transform-gpu rounded-full overflow-hidden"
                       onPlay={() => {
