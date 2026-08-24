@@ -27,6 +27,7 @@ export default function App() {
   const [activeVideoSrc, setActiveVideoSrc] = useState(null);
 
   const canvasRef = useRef(null);
+  const welcomeCanvasRef = useRef(null);
   const speechRef = useRef(null);
   const videoRef = useRef(null);
   const returnTimerRef = useRef(null);
@@ -223,6 +224,177 @@ export default function App() {
     }, 1200);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!showWelcome || !welcomeCanvasRef.current) return;
+
+    const canvas = welcomeCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    const particles = [];
+    const colors = isDark 
+      ? ['#06b6d4', '#6366f1', '#8b5cf6', '#3b82f6'] 
+      : ['#0891b2', '#4f46e5', '#7c3aed', '#2563eb'];
+      
+    let lastMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let hasMoved = false;
+
+    const handleMouseMove = (e) => {
+      lastMousePos.x = e.clientX;
+      lastMousePos.y = e.clientY;
+      hasMoved = true;
+      
+      // Spawn particles on cursor move
+      for (let i = 0; i < 2; i++) {
+        particles.push({
+          x: e.clientX,
+          y: e.clientY,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: (Math.random() - 0.5) * 2.5,
+          radius: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.01
+        });
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        lastMousePos.x = touch.clientX;
+        lastMousePos.y = touch.clientY;
+        hasMoved = true;
+        
+        for (let i = 0; i < 2; i++) {
+          particles.push({
+            x: touch.clientX,
+            y: touch.clientY,
+            vx: (Math.random() - 0.5) * 2.5,
+            vy: (Math.random() - 0.5) * 2.5,
+            radius: Math.random() * 5 + 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 1,
+            decay: Math.random() * 0.015 + 0.01
+          });
+        }
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    // Floating background twinkling particles (twinkles if they do not interact)
+    const bgParticles = [];
+    for (let i = 0; i < 35; i++) {
+      bgParticles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: Math.random() * 4 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.5 + 0.2,
+        baseAlpha: Math.random() * 0.5 + 0.2,
+        twinkleSpeed: Math.random() * 0.03 + 0.01,
+        angle: Math.random() * Math.PI * 2
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Render & update floating background particles
+      bgParticles.forEach(bp => {
+        bp.x += bp.vx;
+        bp.y += bp.vy;
+        
+        if (bp.x < 0) bp.x = canvas.width;
+        if (bp.x > canvas.width) bp.x = 0;
+        if (bp.y < 0) bp.y = canvas.height;
+        if (bp.y > canvas.height) bp.y = 0;
+
+        bp.angle += bp.twinkleSpeed;
+        bp.alpha = bp.baseAlpha + Math.sin(bp.angle) * 0.25;
+        if (bp.alpha < 0.05) bp.alpha = 0.05;
+
+        ctx.save();
+        ctx.globalAlpha = bp.alpha;
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
+        ctx.fillStyle = bp.color;
+        ctx.shadowBlur = bp.radius * 2;
+        ctx.shadowColor = bp.color;
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Automated twinkling circular rounds that move across if mouse does not tap
+      if (!hasMoved) {
+        const time = Date.now() * 0.0008;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(canvas.width, canvas.height) * 0.25;
+        const orbX = centerX + Math.cos(time * 1.1) * radius * 1.5;
+        const orbY = centerY + Math.sin(time * 0.7) * radius;
+        
+        if (Math.random() < 0.25) {
+          particles.push({
+            x: orbX,
+            y: orbY,
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: (Math.random() - 0.5) * 1.2,
+            radius: Math.random() * 4 + 2.5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 0.8,
+            decay: Math.random() * 0.01 + 0.008
+          });
+        }
+      }
+
+      // Cursor trail render
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = p.radius * 2;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [showWelcome, isDark]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -699,10 +871,13 @@ export default function App() {
       {!loading && showWelcome && (
         <div 
           onClick={handleWelcomeEnter}
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6"
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6 overflow-hidden select-none"
           style={{ background: isDark ? 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e0f2fe 100%)' }}
         >
-          <div className="text-center space-y-6 max-w-md mx-auto">
+          {/* Interactive cursor & background twinkling rounds canvas */}
+          <canvas ref={welcomeCanvasRef} className="absolute inset-0 pointer-events-none z-0" />
+          
+          <div className="text-center space-y-6 max-w-md mx-auto relative z-10">
             <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-cyan-500/80 shadow-2xl shadow-cyan-500/30 transition-transform hover:scale-105">
               <img 
                 src={`${import.meta.env.BASE_URL}avatar.jpg`}
