@@ -1352,8 +1352,8 @@ export default function App() {
                   {cat.items.map((item) => (
                     <span 
                       key={item} 
-                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg transition-colors ${
-                        isDark ? 'bg-slate-800/80 text-cyan-300 border border-slate-700' : 'bg-cyan-50/80 text-cyan-800 border border-cyan-200/60'
+                      className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
+                        isDark ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' : 'bg-sky-50 text-sky-700 border border-sky-200/80'
                       }`}
                     >
                       {item}
@@ -1419,10 +1419,10 @@ export default function App() {
                     {project.tech.map((t) => (
                       <span 
                         key={t} 
-                        className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-xl transition-colors ${
+                        className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
                           isDark 
-                            ? 'bg-sky-950/60 text-sky-300 border border-sky-800/60' 
-                            : 'bg-sky-50 text-sky-800 border border-sky-200/80 shadow-xs'
+                            ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' 
+                            : 'bg-sky-50 text-sky-700 border border-sky-200/80'
                         }`}
                       >
                         {t}
@@ -1745,7 +1745,9 @@ export default function App() {
                       'Automation',
                       'Technology-focused roles'
                     ].map((area) => (
-                      <span key={area} className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      <span key={area} className={`text-[11px] font-medium px-3 py-1 rounded-full transition-colors ${
+                        isDark ? 'bg-sky-950/50 text-sky-300 border border-sky-800/50' : 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                      }`}>
                         {area}
                       </span>
                     ))}
