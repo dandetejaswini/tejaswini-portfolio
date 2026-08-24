@@ -223,9 +223,7 @@ export default function App() {
     setShowWelcome(false);
     setLoading(false);
     const greetingText = "Hi! Welcome to Dande Tejaswini's portfolio. I'm your virtual guide. Take a look around to explore her work, technical journey, projects, achievements, and credentials. Let's get started!";
-    setTimeout(() => {
-      playAssistantVideo('greeting.mp4', greetingText);
-    }, 100);
+    playAssistantVideo('greeting.mp4', greetingText);
   };
 
   const handleEmailClick = (e) => {
@@ -1077,7 +1075,7 @@ export default function App() {
                   {/* Permanent Video element - plays automatically on every section click */}
                   <video
                     ref={videoRef}
-                    src={activeVideoSrc || `${import.meta.env.BASE_URL}avatar_videos/greeting.mp4`}
+                    src={activeVideoSrc || ''}
                     autoPlay
                     playsInline
                     preload="auto"
