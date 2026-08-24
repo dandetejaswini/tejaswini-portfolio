@@ -225,7 +225,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Welcome canvas animation - canvas is always in DOM, visibility controlled by CSS
+  // Welcome canvas animation - subtle glassmorphic cursor trail only
   useEffect(() => {
     if (!welcomeCanvasRef.current) return;
     if (!showWelcome || loading) return;
@@ -242,140 +242,65 @@ export default function App() {
     handleResize();
 
     const trail = [];
-    const sparks = [];
-    const bgOrbs = [];
-    const MAX_TRAIL = 150;
-    let hasUserMoved = false;
+    const MAX_TRAIL = 80;
+    const isDarkTheme = theme === 'dark';
 
-    // Background floating twinkling light rounds
-    for (let i = 0; i < 40; i++) {
-      bgOrbs.push({
+    // Subtle floating dots (very light, small, gentle)
+    const dots = [];
+    for (let i = 0; i < 20; i++) {
+      dots.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        radius: Math.random() * 5 + 3,
-        color: Math.random() > 0.5 ? '#2563eb' : '#0284c7',
-        alpha: Math.random() * 0.5 + 0.3,
-        twinkleSpeed: Math.random() * 0.03 + 0.015,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: Math.random() * 2 + 1.5,
+        alpha: Math.random() * 0.15 + 0.08,
+        twinkleSpeed: Math.random() * 0.02 + 0.01,
         angle: Math.random() * Math.PI * 2
       });
     }
 
     const addPoint = (x, y) => {
-      hasUserMoved = true;
-      const now = Date.now();
-      trail.push({ x, y, time: now });
+      trail.push({ x, y, time: Date.now() });
       if (trail.length > MAX_TRAIL) trail.shift();
-
-      // Spawn bright sparkling blue light particles along cursor path
-      for (let i = 0; i < 3; i++) {
-        sparks.push({
-          x: x + (Math.random() - 0.5) * 16,
-          y: y + (Math.random() - 0.5) * 16,
-          vx: (Math.random() - 0.5) * 3,
-          vy: (Math.random() - 0.5) * 3,
-          radius: Math.random() * 4 + 2,
-          color: Math.random() > 0.4 ? '#2563eb' : '#0284c7',
-          alpha: 1,
-          decay: Math.random() * 0.02 + 0.01
-        });
-      }
     };
 
-    const handleMouseMove = (e) => {
-      addPoint(e.clientX, e.clientY);
-    };
-
+    const handleMouseMove = (e) => addPoint(e.clientX, e.clientY);
     const handleTouchMove = (e) => {
-      if (e.touches.length > 0) {
-        addPoint(e.touches[0].clientX, e.touches[0].clientY);
-      }
+      if (e.touches.length > 0) addPoint(e.touches[0].clientX, e.touches[0].clientY);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
-    const autoPath = [];
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const now = Date.now();
-      const isDarkTheme = theme === 'dark';
+      const trailColor = isDarkTheme ? 'rgba(6, 182, 212, ' : 'rgba(8, 145, 178, ';
+      const dotColor = isDarkTheme ? '#06b6d4' : '#0891b2';
 
-      // Colors based on theme for maximum contrast
-      const mainBlue = isDarkTheme ? '#00f0ff' : '#2563eb';
-      const glowBlue = isDarkTheme ? '#0284c7' : '#1d4ed8';
-
-      // 1. Render Floating Twinkling Background Orbs (Always visible!)
-      bgOrbs.forEach(orb => {
-        orb.x += orb.vx;
-        orb.y += orb.vy;
-
-        if (orb.x < 0) orb.x = canvas.width;
-        if (orb.x > canvas.width) orb.x = 0;
-        if (orb.y < 0) orb.y = canvas.height;
-        if (orb.y > canvas.height) orb.y = 0;
-
-        orb.angle += orb.twinkleSpeed;
-        const currentAlpha = Math.max(0.1, orb.alpha + Math.sin(orb.angle) * 0.25);
+      // 1. Very subtle floating dots
+      dots.forEach(d => {
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < 0) d.x = canvas.width;
+        if (d.x > canvas.width) d.x = 0;
+        if (d.y < 0) d.y = canvas.height;
+        if (d.y > canvas.height) d.y = 0;
+        d.angle += d.twinkleSpeed;
+        const a = Math.max(0.05, d.alpha + Math.sin(d.angle) * 0.06);
 
         ctx.save();
-        ctx.globalAlpha = currentAlpha;
+        ctx.globalAlpha = a;
         ctx.beginPath();
-        ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
-        ctx.fillStyle = orb.color;
-        ctx.shadowBlur = orb.radius * 3;
-        ctx.shadowColor = orb.color;
+        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+        ctx.fillStyle = dotColor;
         ctx.fill();
         ctx.restore();
       });
 
-      // 2. Automated Floating Neon Blue Light Drawing Wave when idle
-      if (!hasUserMoved) {
-        const time = now * 0.0015;
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const rx = Math.min(canvas.width, canvas.height) * 0.35;
-        const ry = Math.min(canvas.width, canvas.height) * 0.22;
-        const autoX = cx + Math.sin(time) * rx * Math.cos(time * 0.5);
-        const autoY = cy + Math.cos(time * 0.8) * ry;
-
-        autoPath.push({ x: autoX, y: autoY, time: now });
-        if (autoPath.length > 70) autoPath.shift();
-
-        if (autoPath.length > 1) {
-          for (let i = 1; i < autoPath.length; i++) {
-            const p1 = autoPath[i - 1];
-            const p2 = autoPath[i];
-            const age = now - p2.time;
-            const alpha = Math.max(0, 1 - age / 2000);
-            const width = Math.max(2, (i / autoPath.length) * 8);
-
-            ctx.save();
-            ctx.globalAlpha = alpha;
-            ctx.strokeStyle = mainBlue;
-            ctx.lineWidth = width;
-            ctx.lineCap = 'round';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = glowBlue;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = Math.max(1, width * 0.35);
-            ctx.stroke();
-            ctx.restore();
-          }
-        }
-      }
-
-      // 3. User Interactive Blue Light Dragging Line Trail
-      while (trail.length > 0 && now - trail[0].time > 3000) {
-        trail.shift();
-      }
+      // 2. Delicate cursor light trail
+      while (trail.length > 0 && now - trail[0].time > 1200) trail.shift();
 
       if (trail.length > 1) {
         for (let i = 1; i < trail.length; i++) {
@@ -383,80 +308,39 @@ export default function App() {
           const curr = trail[i];
           const age = now - curr.time;
           const progress = i / trail.length;
-          const alpha = Math.max(0, (1 - age / 3000) * progress);
-          const lineWidth = Math.max(3, progress * 12);
+          const alpha = Math.max(0, (1 - age / 1200) * progress * 0.6);
+          const lineWidth = Math.max(1, progress * 4);
 
           ctx.save();
           ctx.globalAlpha = alpha;
-
-          // Outer Heavy Blue Glow
-          ctx.strokeStyle = mainBlue;
+          ctx.strokeStyle = trailColor + '1)';
           ctx.lineWidth = lineWidth;
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
-          ctx.shadowBlur = 25;
-          ctx.shadowColor = glowBlue;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = dotColor;
           ctx.beginPath();
           ctx.moveTo(prev.x, prev.y);
           ctx.lineTo(curr.x, curr.y);
           ctx.stroke();
-
-          // Bright Core White Laser Center
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = Math.max(1.5, lineWidth * 0.35);
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = mainBlue;
-          ctx.stroke();
           ctx.restore();
         }
 
-        // Glowing Blue Light Pointer Tip
-        const head = trail[trail.length - 1];
-        const headAge = now - head.time;
-        if (headAge < 400) {
+        // Small soft glow at cursor tip
+        const tip = trail[trail.length - 1];
+        const tipAge = now - tip.time;
+        if (tipAge < 150) {
           ctx.save();
-          ctx.globalAlpha = Math.max(0, 1 - headAge / 400);
-
-          const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 30);
-          grad.addColorStop(0, 'rgba(37, 99, 235, 0.95)');
-          grad.addColorStop(0.5, 'rgba(2, 132, 199, 0.5)');
-          grad.addColorStop(1, 'rgba(37, 99, 235, 0)');
-          ctx.fillStyle = grad;
+          ctx.globalAlpha = Math.max(0, (1 - tipAge / 150) * 0.5);
+          const g = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, 12);
+          g.addColorStop(0, trailColor + '0.4)');
+          g.addColorStop(1, trailColor + '0)');
+          ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.arc(head.x, head.y, 30, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = '#00f0ff';
+          ctx.arc(tip.x, tip.y, 12, 0, Math.PI * 2);
           ctx.fill();
           ctx.restore();
         }
-      }
-
-      // 4. Render & Update Twinkling Star Sparks
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i];
-        s.x += s.vx;
-        s.y += s.vy;
-        s.alpha -= s.decay;
-
-        if (s.alpha <= 0) {
-          sparks.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = s.alpha;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.fillStyle = s.color;
-        ctx.shadowBlur = s.radius * 3;
-        ctx.shadowColor = s.color;
-        ctx.fill();
-        ctx.restore();
       }
 
       animationFrameId = requestAnimationFrame(animate);
@@ -959,8 +843,8 @@ export default function App() {
       {!loading && showWelcome && (
         <div 
           onClick={handleWelcomeEnter}
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6 overflow-hidden select-none"
-          style={{ background: isDark ? 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e0f2fe 100%)' }}
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center cursor-pointer p-6 overflow-hidden select-none backdrop-blur-xl"
+          style={{ background: isDark ? 'rgba(15, 23, 42, 0.65)' : 'rgba(248, 250, 252, 0.55)' }}
         >
           
           <div className="text-center space-y-6 max-w-md mx-auto relative z-10">
